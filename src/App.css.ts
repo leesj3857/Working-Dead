@@ -1,0 +1,9 @@
+import { style } from '@vanilla-extract/css'
+
+export const appContainer = style({
+  height: '100dvh',
+  width: '100%',
+  transition: "background-color 0.3s ease",
+  padding: "20px 16px",
+  overflow: 'auto'
+});
