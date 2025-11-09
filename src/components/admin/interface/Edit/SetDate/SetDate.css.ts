@@ -83,13 +83,14 @@ export const monthDropdown = style({
     minWidth: '150px',
 })
 
-export const monthOption = style({
-    padding: '12px 16px',
-    cursor: 'pointer',
-    color: '#19191B',
-    fontSize: '14px',
-    transition: 'background-color 0.2s',
-})
+export const monthOption = style([
+    labelMedium,
+    {
+        padding: '12px 16px',
+        cursor: 'pointer',
+        transition: 'background-color 0.2s',
+    }
+])
 
 export const monthOptionSelected = style({
     backgroundColor: '#CEFAFE',
