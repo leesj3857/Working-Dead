@@ -23,7 +23,7 @@ export const modalContent = style({
     flexDirection: 'column',
     alignItems: 'center',
     gap: '18px',
-    maxWidth: '400px',
+    maxWidth: '350px',
     width: '90%',
 })
 
@@ -124,7 +124,7 @@ export const buttonContainer = style({
     display: 'flex',
     gap: '20px',
     width: '100%',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     marginTop: '10px',
 })
 
@@ -137,8 +137,8 @@ export const editButton = style({
     borderRadius: '16px',
     border: 'none',
     cursor: 'pointer',
-    width: '130px',
-    height: '56px',
+    width: '120px',
+    height: '50px',
 })
 
 export const homeButton = style({
@@ -150,8 +150,8 @@ export const homeButton = style({
     borderRadius: '16px',
     border: 'none',
     cursor: 'pointer',
-    height: '56px',
-    width: '130px',
+    height: '50px',
+    width: '120px',
 })
 
 export const buttonIcon = style({

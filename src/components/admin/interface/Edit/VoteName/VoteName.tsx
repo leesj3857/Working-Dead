@@ -19,7 +19,7 @@ export default function VoteName({ voteName, setVoteName }: { voteName: string, 
                 <motion.span 
                     className={voteLabel}
                     animate={{
-                        top: isActive ? '8px' : '50%',
+                        top: isActive ? '5px' : '50%',
                         translateY: isActive ? '0%' : '-50%',
                         fontSize: isActive ? '11px' : '17px',
                     }}

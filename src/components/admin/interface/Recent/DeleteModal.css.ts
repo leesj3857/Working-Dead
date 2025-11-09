@@ -22,8 +22,8 @@ export const modalContent = style({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '18px',
-    maxWidth: '350px',
+    gap: '10px',
+    maxWidth: '320px',
     width: '90%',
 })
 
@@ -57,8 +57,8 @@ export const cancelButton = style({
     borderRadius: '16px',
     border: 'none',
     cursor: 'pointer',
-    width: '130px',
-    height: '56px'
+    width: '120px',
+    height: '50px'
 })
 
 export const confirmButton = style({
@@ -70,8 +70,8 @@ export const confirmButton = style({
     borderRadius: '16px',
     border: 'none',
     cursor: 'pointer',
-    height: '56px',
-    width: '130px'
+    height: '50px',
+    width: '120px'
 })
 export const buttonIcon = style({
     width: '20px',

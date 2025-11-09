@@ -114,6 +114,15 @@ export default function EditParticipant({ participants, setParticipants }: { par
                                             className={participantInputField}
                                             value={editValue}
                                             onChange={(e) => setEditValue(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault()
+                                                    handleSaveEdit()
+                                                } else if (e.key === 'Escape') {
+                                                    e.preventDefault()
+                                                    handleCancelEdit()
+                                                }
+                                            }}
                                             autoFocus
                                         />
                                     </div>
