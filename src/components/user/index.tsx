@@ -15,7 +15,7 @@ interface MealSelection {
 }
 export default function User() {
     const [step, setStep] = useState(0)
-    const userList = [{ id: '최윤서', name: '최윤서' }, { id: '장동윤', name: '장동윤' }, { id: '이상후', name: '이상후' }, { id: '정하연', name: '정하연' }, { id: '이승준', name: '이승준' }, { id: '김세연', name: '김세연' }]
+    const userList = [{ id: '최윤서', name: '최윤서' }, { id: '장동윤', name: '장동윤' }, { id: '이상후', name: '이상후' }, { id: '정하연', name: '정하연' }, { id: '이승준', name: '이승준' }, { id: '정세연', name: '정세연' }]
     const [currentStatusOpen, setCurrentStatusOpen] = useState(false)
     const [selectedDates, setSelectedDates] = useState<MealSelection[]>([])
     const [orderList, setOrderList] = useState<(MealSelection | null)[]>([null, null, null])
@@ -75,7 +75,7 @@ export default function User() {
             mealType: '점심',
             participants: [
                 { id: '최윤서', name: '최윤서', star: false },
-                { id: '김세연', name: '김세연', star: true },
+                { id: '정세연', name: '정세연', star: true },
                 { id: '이승준', name: '이승준', star: true }
             ]
         },
