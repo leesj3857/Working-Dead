@@ -4,7 +4,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import {QueryClient} from '@tanstack/react-query'
 import App from './App'
-import Home from './pages/Home'
+import User from './pages/User'
 import Admin from './pages/Admin'
 import './index.css'
 const queryClient = new QueryClient()
@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <User /> },
       { path: 'admin', element: <Admin /> },
     ],
   },
