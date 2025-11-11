@@ -26,9 +26,10 @@ interface CalendarProps {
     endDate: Date
     selectedDates: MealSelection[]
     setSelectedDates: React.Dispatch<React.SetStateAction<MealSelection[]>>
+    setOrderList: React.Dispatch<React.SetStateAction<(MealSelection | null)[]>>
 }
 
-export default function Calendar({ startDate, endDate, selectedDates, setSelectedDates }: CalendarProps) {
+export default function Calendar({ startDate, endDate, selectedDates, setSelectedDates,setOrderList }: CalendarProps) {
 
     
     const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -75,6 +76,12 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
         setSelectedDates(prev => {
             const exists = prev.find(m => m.date === date && m.mealType === mealType)
             if (exists) {
+                // selectedDates에서 제거할 때 orderList에서도 제거
+                setOrderList(orderPrev => 
+                    orderPrev.map(o => 
+                        o && o.date === date && o.mealType === mealType ? null : o
+                    )
+                )
                 return prev.filter(m => !(m.date === date && m.mealType === mealType))
             } else {
                 return [...prev, { date, mealType }]

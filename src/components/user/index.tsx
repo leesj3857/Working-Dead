@@ -130,7 +130,7 @@ export default function User() {
             {step === 0 && <SelectUser userList={userList} onNext={onNext} />}
             {step === 1 && 
             <>
-                <Calendar startDate={startDate} endDate={endDate} selectedDates={selectedDates} setSelectedDates={setSelectedDates} />
+                <Calendar startDate={startDate} endDate={endDate} selectedDates={selectedDates} setSelectedDates={setSelectedDates} setOrderList={setOrderList} />
                 <AlertContent message={alertMessage} show={alertType === 'date'} />
                 <SetOrder selectedDates={selectedDates} orderList={orderList} setOrderList={setOrderList} />
                 <AlertContent message={alertMessage} show={alertType === 'order'} />
