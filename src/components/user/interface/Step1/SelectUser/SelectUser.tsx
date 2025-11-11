@@ -3,7 +3,7 @@ import { selectUserContainer, userSelectBox, userNamePlaceHolder,
     userSelectButton, userSelectBoxContent, dropDownContent } from './SelectUser.css'
 import { useState, useMemo } from 'react'
 import Icon from '@mdi/react';
-import { mdiAccountOutline, mdiChevronDown, mdiChevronUp, mdiArrowRight } from '@mdi/js';
+import { mdiAccountOutline, mdiChevronDown, mdiArrowRight } from '@mdi/js';
 import { subtle1, subtle2, accent } from '../../../../../style/color.css'
 import { motion, AnimatePresence } from 'framer-motion'
 export default function SelectUser({ userList, onNext }: { userList: { id: string, name: string }[], onNext: ({ id }: { id: string }) => void }) {

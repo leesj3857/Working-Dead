@@ -44,10 +44,9 @@ interface CurrentStatusModalProps {
     isOpen: boolean
     onClose: () => void
     votes: Vote[]
-    onMoreClick?: () => void
 }
 
-export default function CurrentStatusModal({ isOpen, onClose, votes, onMoreClick }: CurrentStatusModalProps) {
+export default function CurrentStatusModal({ isOpen, onClose, votes }: CurrentStatusModalProps) {
     const [expandedVotes, setExpandedVotes] = useState<Set<string>>(new Set())
     const [showAll, setShowAll] = useState(false)
     

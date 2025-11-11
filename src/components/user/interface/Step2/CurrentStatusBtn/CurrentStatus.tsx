@@ -1,4 +1,4 @@
-import { currentStatusButton, currentStatusIcon, currentStatusText } from './CurrentStatus.css'
+import { currentStatusButton, currentStatusText } from './CurrentStatus.css'
 import Icon from '@mdi/react';
 import { mdiCalendarMonthOutline } from '@mdi/js';
 export default function CurrentStatus({ setCurrentStatusOpen }: { setCurrentStatusOpen: (isOpen: boolean) => void }) {

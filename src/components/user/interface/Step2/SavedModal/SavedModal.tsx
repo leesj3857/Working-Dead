@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Icon from '@mdi/react'
-import { mdiCheck, mdiSquareEditOutline, mdiHomeVariant, mdiExitToApp } from '@mdi/js'
+import { mdiCheck, mdiSquareEditOutline, mdiExitToApp } from '@mdi/js'
 import { 
     modalOverlay, 
     modalContent, 

@@ -1,4 +1,4 @@
-import { topNav, topNavEditing, topNavIcon, topNavAdminText, topNavBackText } from './TopNav.css'
+import { topNav, topNavEditing, topNavIcon, topNavAdminText } from './TopNav.css'
 import Icon from '@mdi/react';
 import { mdiAccountGroupOutline } from '@mdi/js';
 import { accent } from '../../../../style/color.css';
