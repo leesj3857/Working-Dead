@@ -18,7 +18,7 @@ export const topNavEditing = style({
 })
 
 export const topNavIcon = style({
-    height: '20px',
+    height: '30px',
 })
 
 export const topNavAdminText = style([

@@ -1,9 +1,9 @@
 import { setOrderContainer, orderIcon, orderTitle, 
     orderDescription, orderTitleContainer, priorityList, priorityItem,
     priorityNumber, prioritySlot, divider, datesList, dateChip, 
-    dateChipSelected, closeIcon, dateText } from './SetOrder.css'
+    dateChipSelected, dateText } from './SetOrder.css'
 import Icon from '@mdi/react'
-import { mdiWeatherSunny, mdiWeatherNight, mdiClose } from '@mdi/js'
+import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
 import { subtle1 } from '../../../../../style/color.css'
 
 interface MealSelection {
@@ -85,9 +85,9 @@ export default function SetOrder({ selectedDates, orderList, setOrderList }: Set
                                     <span className={dateText}>
                                         {formatDate(order.date)} — {order.mealType === 'lunch' ? '점심' : '저녁'}
                                     </span>
-                                    <div className={closeIcon} onClick={() => handleRemoveOrder(index)}>
+                                    {/* <div className={closeIcon} onClick={() => handleRemoveOrder(index)}>
                                         <Icon path={mdiClose} size={0.6} color={subtle1} />
-                                    </div>
+                                    </div> */}
                                 </>
                             )}
                         </div>

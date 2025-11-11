@@ -4,13 +4,18 @@ import { labelSmall, bodySmall } from '../../../../../style/typography.css'
 
 export const calendarContainer = style({
     width: '100%',
-    maxHeight: '50dvh',
     borderTop: `1px solid ${subtle2}`,
     borderBottom: `1px solid ${subtle2}`,
     padding: '10px 17px',
     marginBottom: '20px',
-    overflowX: 'auto',
+})
+
+export const dateContainer = style({
+    maxHeight: '50dvh',
     overflowY: 'auto',
+    overflowX: 'auto',
+    position: 'relative',
+    width: '100%',
 })
 
 export const weekdayHeader = style({
@@ -18,7 +23,8 @@ export const weekdayHeader = style({
     gridTemplateColumns: 'repeat(7, 70px)',
     gap: '2px',
     marginBottom: '10px',
-    minWidth: 'fit-content',
+    overflowX: 'hidden',
+    overflowY: 'hidden',
 })
 
 export const weekdayLabel = style([

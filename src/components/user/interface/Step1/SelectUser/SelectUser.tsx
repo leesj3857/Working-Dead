@@ -36,7 +36,7 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
     
     return (
         <div className={selectUserContainer}>
-            <div className={userSelectBox}>
+            <div className={userSelectBox} onClick={() => setIsOpen(!isOpen)}>
                 <div className={userSelectBoxContent}>
                     <Icon path={mdiAccountOutline} size={1} color={subtle1} />
                     {!user ? <span className={userNamePlaceHolder}>NAME</span> 
@@ -59,7 +59,7 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
                         </div>
                     )}
                 </div>
-                <button className={userSelectButton} onClick={() => setIsOpen(!isOpen)}>
+                <button className={userSelectButton}>
                     <motion.div
                         animate={{ rotate: isOpen ? 180 : 0 }}
                         transition={{ duration: 0.2 }}
@@ -87,6 +87,7 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
                             }}
                             onAnimationComplete={() => setIsAnimationComplete(true)}
                             style={{ overflow: 'hidden' }}
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <div 
                                 className={dropDownContent}
