@@ -8,7 +8,7 @@ import { subtle1, subtle2, accent } from '../../../../../style/color.css'
 import { motion, AnimatePresence } from 'framer-motion'
 export default function SelectUser({ userList, onNext }: { userList: { id: string, name: string }[], onNext: ({ id }: { id: string }) => void }) {
     const [user, setUser] = useState('')
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(true)
     const [isAnimationComplete, setIsAnimationComplete] = useState(false)
     const colorSets = [
         { background: '#F64900', text: '#FFFFFF', border: 'none' },
