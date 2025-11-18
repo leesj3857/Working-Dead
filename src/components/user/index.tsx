@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TopNav from './interface/TopNav/TopNav'
 import Description from './interface/Description/Description'
 import SelectUser from './interface/Step1/SelectUser/SelectUser'
@@ -9,18 +9,52 @@ import Calendar from './interface/Step2/Calendar/Calendar'
 import SetOrder from './interface/Step2/SetOrder/SetOrder'
 import SavedModal from './interface/Step2/SavedModal/SavedModal'
 import AlertContent from './interface/Step2/AlertContent/AlertContent'
-import type { Period } from '../../api/type'
+import type { Period, Priority } from '../../api/type'
+import { useQuery } from '@tanstack/react-query'
+import { getVoteIdByCode } from '../../api/vote'
 interface MealSelection {
     date: string
     period: Period
 }
+import { getVote } from '../../api/vote'
+import { getParticipants, getParticipantChoices, updateSchedule } from '../../api/participant'
 export default function User({ code }: { code?: string }) {
     const [step, setStep] = useState(0)
-    const userList = [{ id: '최윤서', name: '최윤서' }, { id: '장동윤', name: '장동윤' }, { id: '이상후', name: '이상후' }, { id: '정하연', name: '정하연' }, { id: '이승준', name: '이승준' }, { id: '정세연', name: '정세연' }]
+    const [selectedParticipantId, setSelectedParticipantId] = useState<number | null>(null)
     
     // code가 있으면 voteId로 사용
-    console.log('Vote code:', code)
+    const { data: voteId } = useQuery({
+        queryKey: ['voteId', code],
+        queryFn: () => getVoteIdByCode(code ?? ''),
+        enabled: !!code,
+    })
+    const { data: vote } = useQuery({
+        queryKey: ['vote', voteId],
+        queryFn: () => getVote(voteId ?? 0),
+        enabled: !!voteId,
+    })
+    const { data: participants } = useQuery({
+        queryKey: ['participants', voteId],
+        queryFn: () => getParticipants(voteId ?? 0),
+        enabled: !!voteId,
+    })
+    
+    // 선택한 참가자의 기존 선택사항 조회
+    const { data: participantChoices } = useQuery({
+        queryKey: ['participant-choices', voteId, selectedParticipantId],
+        queryFn: () => getParticipantChoices(voteId!, selectedParticipantId!),
+        enabled: !!voteId && !!selectedParticipantId,
+    })
+    
+    
+    console.log('Vote code:', code, voteId)
     const [currentStatusOpen, setCurrentStatusOpen] = useState(false)
+    
+    // 원본 데이터
+    const [originalSelectedDates, setOriginalSelectedDates] = useState<MealSelection[]>([])
+    const [originalOrderList, setOriginalOrderList] = useState<(MealSelection | null)[]>([null, null, null])
+    
+    // 작업용 복사본
     const [selectedDates, setSelectedDates] = useState<MealSelection[]>([])
     const [orderList, setOrderList] = useState<(MealSelection | null)[]>([null, null, null])
     const [savedModalOpen, setSavedModalOpen] = useState(false)
@@ -34,18 +68,58 @@ export default function User({ code }: { code?: string }) {
         setAlertType('order')
         setAlertMessage('시간대를 선택해주세요')
     }
-    // 날짜 범위 설정 (예시: 2025년 11월 2일 ~ 11월 15일)
-    const startDate = new Date(2025, 10, 4) // 월은 0부터 시작 (10 = 11월)
-    const endDate = new Date(2025, 10, 15)
-    const onNext = ({ id }: { id: string }) => {
-        if(!id) {
-            return
-        }
-        setStep(step + 1)
-        setSelectedDates([])
-        setOrderList([null, null, null])
+    // 날짜 형식 변환: "2025-11-25" -> "11/25"
+    const formatDateToCalendar = (dateStr: string): string => {
+        const date = new Date(dateStr)
+        const month = date.getMonth() + 1
+        const day = date.getDate()
+        return `${month}/${day}`
     }
-    const onSaveClick = () => {
+    
+    // 참가자 선택사항 로드
+    useEffect(() => {
+        if (participantChoices) {
+            // selections에서 selected: true인 항목들을 selectedDates로 변환
+            const selected: MealSelection[] = participantChoices.selections
+                .filter(s => s.selected)
+                .map(s => ({
+                    date: formatDateToCalendar(s.date),
+                    period: s.period as Period
+                }))
+            
+            // priorities를 priorityIndex 순서로 정렬하여 orderList 생성
+            const ordered = participantChoices.priorities
+                .sort((a, b) => a.priorityIndex - b.priorityIndex)
+                .map(p => ({
+                    date: formatDateToCalendar(p.date),
+                    period: p.period as Period
+                }))
+            
+            // 3개 길이 배열로 만들기 (부족하면 null로 채움)
+            const orderArray: (MealSelection | null)[] = [
+                ordered[0] || null,
+                ordered[1] || null,
+                ordered[2] || null
+            ]
+            
+            setOriginalSelectedDates(selected)
+            setOriginalOrderList(orderArray)
+            setSelectedDates([...selected])
+            setOrderList([...orderArray])
+        }
+    }, [participantChoices])
+    
+    // 날짜 범위 설정
+    const startDate = new Date(vote?.startDate ?? '')
+    const endDate = new Date(vote?.endDate ?? '')
+    
+    const onNext = ({ id }: { id: number | null }) => {
+        if (id) {
+            setSelectedParticipantId(id)
+            setStep(step + 1)
+        }
+    }
+    const onSaveClick = async () => {
         if(selectedDates.length === 0 ) {
             handleDateAlert()
             return
@@ -56,82 +130,80 @@ export default function User({ code }: { code?: string }) {
         }
         setAlertType(null)
         setAlertMessage('')
+        
+        // API 호출하여 저장
+        if (selectedParticipantId && voteId) {
+            // schedules 생성: 모든 날짜를 순회하며 선택된 period 확인
+            const startDateObj = new Date(vote!.startDate)
+            const endDateObj = new Date(vote!.endDate)
+            const schedules = []
+            
+            for (let d = new Date(startDateObj); d <= endDateObj; d.setDate(d.getDate() + 1)) {
+                const dateStr = `${d.getMonth() + 1}/${d.getDate()}`
+                const lunchSelected = selectedDates.some(s => s.date === dateStr && s.period === 'LUNCH')
+                const dinnerSelected = selectedDates.some(s => s.date === dateStr && s.period === 'DINNER')
+                
+                const slots = []
+                if (lunchSelected) slots.push({ period: 'LUNCH', selected: true })
+                if (dinnerSelected) slots.push({ period: 'DINNER', selected: true })
+                
+                if (slots.length > 0) {
+                    // YYYY-MM-DD 형식으로 변환
+                    const year = d.getFullYear()
+                    const month = String(d.getMonth() + 1).padStart(2, '0')
+                    const day = String(d.getDate()).padStart(2, '0')
+                    schedules.push({
+                        date: `${year}-${month}-${day}`,
+                        slots
+                    })
+                }
+            }
+            
+            // priorities 생성: orderList에서 null이 아닌 항목만, priorityIndex는 1,2,3
+            const priorities: Priority[] = orderList
+                .filter((item): item is MealSelection => item !== null)
+                .map((item, index) => {
+                    // date를 YYYY-MM-DD 형식으로 변환
+                    const [m, d] = item.date.split('/')
+                    const year = startDateObj.getFullYear()
+                    const dateStr = `${year}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`
+                    
+                    return {
+                        date: dateStr,
+                        period: item.period as string,
+                        priorityIndex: index + 1
+                        // weight 필드는 전달하지 않음
+                    }
+                })
+            
+            await updateSchedule(selectedParticipantId, {
+                schedules,
+                priorities
+            })
+            
+            // 원본 데이터 업데이트
+            setOriginalSelectedDates([...selectedDates])
+            setOriginalOrderList([...orderList])
+        }
+        
         setSavedModalOpen(true)
     }
-    const votes = [
-        {
-            id: '1',
-            date: '2025-01-01',
-            dayOfWeek: '화',
-            period: 'LUNCH' as Period,
-            participants: [
-                { id: '최윤서', name: '최윤서', star: true },
-                { id: '장동윤', name: '장동윤', star: false },
-                { id: '이상후', name: '이상후', star: true },
-                { id: '정하연', name: '정하연', star: false },
-                { id: '이승준', name: '이승준', star: false },
-            ]
-        },
-        {
-            id: '2',
-            date: '2025-01-02',
-            dayOfWeek: '수',
-            period: 'LUNCH' as Period,
-            participants: [
-                { id: '최윤서', name: '최윤서', star: false },
-                { id: '정세연', name: '정세연', star: true },
-                { id: '이승준', name: '이승준', star: true }
-            ]
-        },
-        {
-            id: '3',
-            date: '2025-01-03',
-            dayOfWeek: '목',
-            period: 'LUNCH' as Period,
-            participants: [
-                { id: '최윤서', name: '최윤서', star: false },
-            ]
-        },
-        {
-            id: '4',
-            date: '2025-01-04',
-            dayOfWeek: '금',
-            period: 'LUNCH' as Period,
-            participants: [
-                { id: '최윤서', name: '최윤서', star: false },
-            ]
-        },
-        {
-            id: '5',
-            date: '2025-01-05',
-            dayOfWeek: '토',
-            period: 'LUNCH' as Period,
-            participants: [
-                { id: '최윤서', name: '최윤서', star: false },
-            ]
-        },
-        {
-            id: '6',
-            date: '2025-01-06',
-            dayOfWeek: '일',
-            period: 'LUNCH' as Period,
-            participants: [
-                { id: '최윤서', name: '최윤서', star: false },
-            ]
-        }
-    ]
+    
     const handleExit = () => {
         setSavedModalOpen(false)
         setStep(0)
+        setSelectedParticipantId(null)
         setSelectedDates([])
         setOrderList([null, null, null])
+        setOriginalSelectedDates([])
+        setOriginalOrderList([null, null, null])
     }
 
     return (
         <div style={{ paddingBottom: '70px' }}>
             <TopNav step={step} setStep={setStep} />
             <Description title={step === 0 ? '본인 선택' : '가능한 시간'} description={step === 0 ? '가능한 일정을 투표할 본인 이름을 선택해주세요' : '가능한 날짜와 시간대를 모두 선택해주세요'} />
-            {step === 0 && <SelectUser userList={userList} onNext={onNext} />}
+            {step === 0 && <SelectUser userList={participants?.map(participant => ({ id: participant.id, name: participant.displayName })) ?? []} onNext={onNext} />}
             {step === 1 && 
             <>
                 <Calendar startDate={startDate} endDate={endDate} selectedDates={selectedDates} setSelectedDates={setSelectedDates} setOrderList={setOrderList} />
@@ -141,7 +213,7 @@ export default function User({ code }: { code?: string }) {
                 <SaveButton onSaveClick={onSaveClick} />
                 <CurrentStatus setCurrentStatusOpen={setCurrentStatusOpen} />
             </>}
-            {currentStatusOpen && <CurrentStatusModal isOpen={currentStatusOpen} votes={votes} onClose={() => setCurrentStatusOpen(false)} />}
+            {currentStatusOpen && voteId && <CurrentStatusModal isOpen={currentStatusOpen} voteId={voteId} onClose={() => setCurrentStatusOpen(false)} />}
             {savedModalOpen && <SavedModal onEdit={() => setSavedModalOpen(false)} onExit={handleExit} />}
         </div>
     )

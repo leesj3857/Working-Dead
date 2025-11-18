@@ -35,6 +35,6 @@ export interface Priority {
     date: string,
     period: string,
     priorityIndex: number,
-    weight: number,
+    weight?: number,
 
 }

@@ -26,6 +26,8 @@ import { subtle1, accent, subtle2 } from '../../../../../style/color.css'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import type { Period } from '../../../../../api/type'
+import { useQuery } from '@tanstack/react-query'
+import { getVoteResult } from '../../../../../api/vote'
 interface Participant {
     id: string
     name: string
@@ -43,11 +45,43 @@ interface Vote {
 interface CurrentStatusModalProps {
     isOpen: boolean
     onClose: () => void
-    votes: Vote[]
+    voteId: number
 }
 
-export default function CurrentStatusModal({ isOpen, onClose, votes }: CurrentStatusModalProps) {
+export default function CurrentStatusModal({ isOpen, onClose, voteId }: CurrentStatusModalProps) {
     const [expandedVotes, setExpandedVotes] = useState<Set<string>>(new Set())
+    
+    // 투표 결과 조회 (모달이 열릴 때마다 최신 데이터)
+    const { data: voteResult } = useQuery({
+        queryKey: ['vote-result', voteId],
+        queryFn: () => getVoteResult(voteId),
+        enabled: isOpen && !!voteId,
+    })
+    
+    // 투표 결과를 CurrentStatusModal 형식으로 변환
+    const votes = voteResult?.rankings.map(rank => {
+        // 날짜를 요일로 변환
+        const dateObj = new Date(rank.date)
+        const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][dateObj.getDay()]
+        
+        // 참가자 정보 변환: priority가 있으면 star: true
+        const participants = rank.voters.map(voter => {
+            const hasPriority = voter.priorityIndex > 0
+            return {
+                id: String(voter.participantId),
+                name: voter.participantName,
+                star: hasPriority
+            }
+        })
+        
+        return {
+            id: `${rank.rank}`,
+            date: rank.date,
+            dayOfWeek,
+            period: rank.period as Period,
+            participants
+        }
+    }) || []
     const [showAll, setShowAll] = useState(false)
     
     const displayedVotes = showAll ? votes : votes.slice(0, 3)

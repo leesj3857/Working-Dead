@@ -80,6 +80,10 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
         return result
     }, [startDate, endDate])
     
+    // 실제 필요한 열 개수 계산 (dates 배열 길이를 7로 나눈 올림값 * 7)
+    const actualColumns = dates.length
+    const gridColumns = Math.min(7, actualColumns) // 최대 7열
+    
     const toggleDate = (date: string) => {
         setSelectedDates(prev => {
             const hasLunch = prev.some(m => m.date === date && m.period === 'LUNCH')
@@ -134,15 +138,19 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
     return (
         <div className={calendarContainer}>
             {/* 요일 헤더 */}
-            <div className={weekdayHeader} ref={weekdayHeaderRef}>
-                {weekdays.map((day, index) => (
+            <div 
+                className={weekdayHeader} 
+                ref={weekdayHeaderRef}
+                style={{ gridTemplateColumns: `repeat(${gridColumns}, 70px)` }}
+            >
+                {weekdays.slice(0, gridColumns).map((day, index) => (
                     <div key={index} className={weekdayLabel}>
                         {day}
                     </div>
                 ))}
             </div>
             <div className={dateContainer} ref={dateContainerRef} onScroll={handleScroll}>
-                <div className={datesGrid}>
+                <div className={datesGrid} style={{ gridTemplateColumns: `repeat(${gridColumns}, 70px)` }}>
                     {dates.map((dateInfo, index) => {
                         // 빈 칸인 경우
                         if (dateInfo.isEmpty) {

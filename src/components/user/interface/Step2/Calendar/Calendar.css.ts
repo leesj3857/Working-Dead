@@ -16,6 +16,7 @@ export const dateContainer = style({
     overflowX: 'auto',
     position: 'relative',
     width: '100%',
+    paddingBottom: '10px',
 })
 
 export const weekdayHeader = style({

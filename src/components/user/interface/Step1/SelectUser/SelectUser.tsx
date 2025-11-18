@@ -6,8 +6,8 @@ import Icon from '@mdi/react';
 import { mdiAccountOutline, mdiChevronDown, mdiArrowRight } from '@mdi/js';
 import { subtle1, subtle2, accent } from '../../../../../style/color.css'
 import { motion, AnimatePresence } from 'framer-motion'
-export default function SelectUser({ userList, onNext }: { userList: { id: string, name: string }[], onNext: ({ id }: { id: string }) => void }) {
-    const [user, setUser] = useState('')
+export default function SelectUser({ userList, onNext }: { userList: { id: number, name: string }[], onNext: ({ id }: { id: number | null }) => void }) {
+    const [userId, setUserId] = useState<number | null>(null)
     const [isOpen, setIsOpen] = useState(true)
     const [isAnimationComplete, setIsAnimationComplete] = useState(false)
     const colorSets = [
@@ -22,24 +22,20 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
         { background: '#6E6A68', text: '#FFFFFF', border: 'none' },
         { background: accent, text: '#FFFFFF', border: 'none' },
     ]
-    const getColorSet = (index: number) => {
-        return colorSets[index % colorSets.length]
+    const getColorSet = (userId: number) => {
+        return colorSets[userId % colorSets.length]
     }
     
-    const selectedUserIndex = useMemo(() => {
-        return user ? userList.findIndex(({ id }) => id === user) : -1
-    }, [user, userList])
-    
     const selectedColorSet = useMemo(() => {
-        return selectedUserIndex !== -1 ? getColorSet(selectedUserIndex) : null
-    }, [selectedUserIndex])
+        return userId ? getColorSet(userId) : null
+    }, [userId])
     
     return (
         <div className={selectUserContainer}>
             <div className={userSelectBox} onClick={() => setIsOpen(!isOpen)}>
                 <div className={userSelectBoxContent}>
                     <Icon path={mdiAccountOutline} size={1} color={subtle1} />
-                    {!user ? <span className={userNamePlaceHolder}>NAME</span> 
+                    {!userId ? <span className={userNamePlaceHolder}>NAME</span> 
                     : 
                     (
                         <div 
@@ -54,7 +50,7 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
                                 className={participantChipText}
                                 style={{ color: selectedColorSet!.text }}
                             >
-                                {userList.find(({ id }) => id === user)?.name}
+                                {userList.find(({ id }) => id === userId)?.name}
                             </span>
                         </div>
                     )}
@@ -96,13 +92,13 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
                                     }}
                                 >
                                     {userList.map(({ id, name }, index) => {
-                                    const colorSet = getColorSet(index)
+                                    const colorSet = getColorSet(id)
                                     return (
                                         <motion.div 
                                             className={participantChip}
                                             key={id}
                                             onClick={() => {
-                                                setUser(id)
+                                                setUserId(id)
                                                 setIsOpen(false)
                                             }}
                                             style={{ 
@@ -133,9 +129,9 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
             </div>
             <motion.div 
                 className={goContainer} 
-                onClick={() => onNext({ id: user })}
+                onClick={() => userId && onNext({ id: userId })}
                 animate={{
-                    backgroundColor: selectedColorSet ? selectedColorSet.background : subtle2
+                    backgroundColor: userId ? selectedColorSet!.background : subtle2
                 }}
                 transition={{ duration: 0.1, ease: 'easeInOut' }}
             >
@@ -146,7 +142,7 @@ export default function SelectUser({ userList, onNext }: { userList: { id: strin
                         justifyContent: 'center',
                     }}
                     animate={{
-                        color: selectedColorSet ? selectedColorSet.text : '#FFFFFF'
+                        color: userId ? selectedColorSet!.text : '#FFFFFF'
                     }}
                     transition={{ duration: 0.1, ease: 'easeInOut' }}
                 >

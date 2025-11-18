@@ -118,3 +118,11 @@ export const getVoteResult = async (
   return response.data;
 };
 
+export const getVoteIdByCode = async (
+  code: string
+): Promise<number | undefined> => {
+  const response: AxiosResponse<VoteResponse> = await apiClient.get(
+    `/votes/share/${code}`
+  );
+  return response.data?.id ?? undefined;
+};

@@ -63,7 +63,7 @@ export const updateSchedule = async (
   id: number,
   data: ScheduleRequest
 ): Promise<ScheduleResponse> => {
-  const response: AxiosResponse<ScheduleResponse> = await apiClient.put(`/participants/${id}/schedule`, data);
+  const response: AxiosResponse<ScheduleResponse> = await apiClient.patch(`/participants/${id}/schedule`, data);
   return response.data;
 };
 
