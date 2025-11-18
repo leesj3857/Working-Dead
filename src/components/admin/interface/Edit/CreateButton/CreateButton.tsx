@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createButton, buttonIcon, buttonText } from './CreateButton.css'
 
-export default function CreateButton({ onSaveClick }: { onSaveClick: () => void }) {
+export default function CreateButton({ onSaveClick, isEditMode = false }: { onSaveClick: () => void, isEditMode?: boolean }) {
     const [isHovered, setIsHovered] = useState(false)
 
     return (
@@ -16,7 +16,7 @@ export default function CreateButton({ onSaveClick }: { onSaveClick: () => void 
                 alt="Tick" 
                 className={buttonIcon} 
             />
-            <span className={buttonText}>투표 생성</span>
+            <span className={buttonText}>{isEditMode ? '투표 수정' : '투표 생성'}</span>
         </button>
     )
 }

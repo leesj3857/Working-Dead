@@ -16,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <User /> },
       { path: 'admin', element: <Admin /> },
+      { path: 'v/:code', element: <User /> },
     ],
   },
 ])

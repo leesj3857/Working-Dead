@@ -25,9 +25,10 @@ interface SavedModalProps {
     onEdit: () => void
     onHome: () => void
     shareLink: string
+    isEditMode?: boolean
 }
 
-export default function SavedModal({ onEdit, onHome, shareLink }: SavedModalProps) {
+export default function SavedModal({ onEdit, onHome, shareLink, isEditMode = false }: SavedModalProps) {
     const handleCopy = () => {
         navigator.clipboard.writeText(shareLink)
     }
@@ -62,22 +63,24 @@ export default function SavedModal({ onEdit, onHome, shareLink }: SavedModalProp
                     <div className={checkIconWrapper}>
                         <Icon path={mdiCheck} size={1.5} className={checkIcon} />
                     </div>
-                    <h2 className={modalTitle}>투표가 저장되었습니다!</h2>
+                    <h2 className={modalTitle}>{isEditMode ? '투표가 수정되었습니다!' : '투표가 저장되었습니다!'}</h2>
                     
-                    <div className={shareSection}>
-                        <span className={shareTitle}>약속 공유하기</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div className={linkContainer}>
-                                <div onClick={handleCopy} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                    <Icon path={mdiContentCopy} size={0.75} className={copyIcon} />
+                    {!isEditMode && (
+                        <div className={shareSection}>
+                            <span className={shareTitle}>약속 공유하기</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div className={linkContainer}>
+                                    <div onClick={handleCopy} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                                        <Icon path={mdiContentCopy} size={0.75} className={copyIcon} />
+                                    </div>
+                                    <span className={linkText}>{shareLink}</span>
                                 </div>
-                                <span className={linkText}>{shareLink}</span>
+                                <button className={shareButton} onClick={handleShare}>
+                                    <img src="/Send.png" alt="Share" className={shareIcon} />
+                                </button>
                             </div>
-                            <button className={shareButton} onClick={handleShare}>
-                                <img src="/Send.png" alt="Share" className={shareIcon} />
-                            </button>
                         </div>
-                    </div>
+                    )}
 
                     <div className={buttonContainer}>
                         <button className={editButton} onClick={onEdit}>

@@ -94,19 +94,30 @@ export default function SetDate({ startDate, setStartDate, endDate, setEndDate }
         const date = new Date(year, month + monthOffset, day)
         date.setHours(0, 0, 0, 0)
         
-        // endDate가 없으면 startDate만 선택된 상태
+        // endDate가 없으면 startDate만 선택된 상태 (년월일만 비교)
         if (!endDate) {
-            return date.getTime() === startDate.getTime()
+            return date.getFullYear() === startDate.getFullYear() &&
+                   date.getMonth() === startDate.getMonth() &&
+                   date.getDate() === startDate.getDate()
         }
         
-        return date >= startDate && date <= endDate
+        // 범위 비교를 위해 startDate와 endDate도 시간 정규화
+        const normalizedStart = new Date(startDate)
+        normalizedStart.setHours(0, 0, 0, 0)
+        const normalizedEnd = new Date(endDate)
+        normalizedEnd.setHours(0, 0, 0, 0)
+        
+        return date >= normalizedStart && date <= normalizedEnd
     }
 
     const isRangeStart = (day: number, monthOffset: number = 0) => {
         if (!startDate) return false
         const date = new Date(year, month + monthOffset, day)
-        date.setHours(0, 0, 0, 0)
-        const isStart = date.getTime() === startDate.getTime()
+        
+        // 년월일만 비교
+        const isStart = date.getFullYear() === startDate.getFullYear() &&
+                       date.getMonth() === startDate.getMonth() &&
+                       date.getDate() === startDate.getDate()
         
         // endDate가 없으면 startDate도 시작이자 끝
         if (!endDate && isStart) return true
@@ -117,14 +128,18 @@ export default function SetDate({ startDate, setStartDate, endDate, setEndDate }
     const isRangeEnd = (day: number, monthOffset: number = 0) => {
         if (!startDate) return false
         const date = new Date(year, month + monthOffset, day)
-        date.setHours(0, 0, 0, 0)
         
         // endDate가 없으면 startDate가 끝
         if (!endDate) {
-            return date.getTime() === startDate.getTime()
+            return date.getFullYear() === startDate.getFullYear() &&
+                   date.getMonth() === startDate.getMonth() &&
+                   date.getDate() === startDate.getDate()
         }
         
-        return date.getTime() === endDate.getTime()
+        // 년월일만 비교
+        return date.getFullYear() === endDate.getFullYear() &&
+               date.getMonth() === endDate.getMonth() &&
+               date.getDate() === endDate.getDate()
     }
 
     const isPastDate = (day: number, monthOffset: number = 0) => {

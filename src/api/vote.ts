@@ -7,7 +7,7 @@ export interface AllVotesResponse {
   name: string,
   code: string,
   adminUrl: string,
-  sharedUrl: string,
+  shareUrl: string,
   startDate: string,
   endDate: string
 }
@@ -21,8 +21,10 @@ export interface VoteResponse {
   name: string,
   code: string,
   startDate: string,
-  endDate: string
-  participants: Participant[]
+  endDate: string,
+  participants: Participant[],
+  shareUrl: string,
+  adminUrl: string,
 }
 
 export interface UpdateVoteRequest {
@@ -33,7 +35,7 @@ export interface UpdateVoteRequest {
 export interface CreateVoteRequest {
   name: string,
   startDate: string,
-  endDate: string
+  endDate: string,
   participantNames: string[]
 }
 

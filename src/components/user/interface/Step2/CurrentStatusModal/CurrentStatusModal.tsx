@@ -25,7 +25,7 @@ import { mdiClose, mdiAccountMultipleOutline, mdiChevronDown, mdiMinusBoxOutline
 import { subtle1, accent, subtle2 } from '../../../../../style/color.css'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-
+import type { Period } from '../../../../../api/type'
 interface Participant {
     id: string
     name: string
@@ -36,7 +36,7 @@ interface Vote {
     id: string
     date: string
     dayOfWeek: string
-    mealType: string
+    period: Period
     participants: Participant[]
 }
 
@@ -138,7 +138,7 @@ export default function CurrentStatusModal({ isOpen, onClose, votes }: CurrentSt
                                                     <div className={voteDate}>
                                                         {vote.date} ({vote.dayOfWeek})
                                                     </div>
-                                                    <div className={voteMealType}>{vote.mealType}</div>
+                                                    <div className={voteMealType}>{vote.period === 'LUNCH' ? '점심' : '저녁'}</div>
                                                 </div>
                                                 <div className={voteStats}>
                                                     <Icon 

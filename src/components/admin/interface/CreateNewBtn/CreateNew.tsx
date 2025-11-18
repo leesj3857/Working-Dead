@@ -1,9 +1,6 @@
 import { createNewButton, createNewIcon, createNewText } from './CreateNew.css'
 
-export default function CreateNew({ setIsEditing }: { setIsEditing: (isEditing: boolean) => void }) {
-    const handleCreateNewClick = () => {
-        setIsEditing(true)
-    }
+export default function CreateNew({ handleCreateNewClick }: { handleCreateNewClick: () => void }) {
     return (
         <button className={createNewButton} onClick={handleCreateNewClick}>
             <img src="/Edit.png" alt="Edit" className={createNewIcon} />

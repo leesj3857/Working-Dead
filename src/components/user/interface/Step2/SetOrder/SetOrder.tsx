@@ -5,10 +5,11 @@ import { setOrderContainer, orderIcon, orderTitle,
 import Icon from '@mdi/react'
 import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
 import { subtle1 } from '../../../../../style/color.css'
+import type { Period } from '../../../../../api/type'
 
 interface MealSelection {
     date: string
-    mealType: 'lunch' | 'dinner'
+    period: Period
 }
 
 interface SetOrderProps {
@@ -38,12 +39,12 @@ export default function SetOrder({ selectedDates, orderList, setOrderList }: Set
     }
     
     const isDateInOrderList = (meal: MealSelection) => {
-        return orderList.some(o => o && o.date === meal.date && o.mealType === meal.mealType)
+        return orderList.some(o => o && o.date === meal.date && o.period === meal.period)
     }
     
     const handleDateClick = (meal: MealSelection) => {
         if (isDateInOrderList(meal)){
-            handleRemoveOrder(orderList.findIndex(o => o && o.date === meal.date && o.mealType === meal.mealType))
+            handleRemoveOrder(orderList.findIndex(o => o && o.date === meal.date && o.period === meal.period))
             return
         }
         
@@ -78,12 +79,12 @@ export default function SetOrder({ selectedDates, orderList, setOrderList }: Set
                             {order && (
                                 <>
                                     <Icon 
-                                        path={order.mealType === 'lunch' ? mdiWeatherSunny : mdiWeatherNight}
+                                        path={order.period === 'LUNCH' ? mdiWeatherSunny : mdiWeatherNight}
                                         size={0.6}
                                         color={subtle1}
                                     />
                                     <span className={dateText}>
-                                        {formatDate(order.date)} — {order.mealType === 'lunch' ? '점심' : '저녁'}
+                                        {formatDate(order.date)} — {order.period === 'LUNCH' ? '점심' : '저녁'}
                                     </span>
                                     {/* <div className={closeIcon} onClick={() => handleRemoveOrder(index)}>
                                         <Icon path={mdiClose} size={0.6} color={subtle1} />
@@ -104,7 +105,7 @@ export default function SetOrder({ selectedDates, orderList, setOrderList }: Set
                     const isSelected = isDateInOrderList(meal)
                     return (
                         <div 
-                            key={`${meal.date}-${meal.mealType}-${index}`}
+                            key={`${meal.date}-${meal.period}-${index}`}
                             className={`${dateChip} ${isSelected ? dateChipSelected : ''}`}
                             onClick={() => handleDateClick(meal)}
                             style={{
@@ -113,12 +114,12 @@ export default function SetOrder({ selectedDates, orderList, setOrderList }: Set
                             }}
                         >
                             <Icon 
-                                path={meal.mealType === 'lunch' ? mdiWeatherSunny : mdiWeatherNight}
+                                path={meal.period === 'LUNCH' ? mdiWeatherSunny : mdiWeatherNight}
                                 size={0.6}
                                 color={isSelected ? '#FFFFFF' : subtle1}
                             />
                             <span className={dateText} style={{ color: isSelected ? '#FFFFFF' : subtle1 }}>
-                                {formatDate(meal.date)} — {meal.mealType === 'lunch' ? '점심' : '저녁'}
+                                {formatDate(meal.date)} — {meal.period === 'LUNCH' ? '점심' : '저녁'}
                             </span>
                         </div>
                     )

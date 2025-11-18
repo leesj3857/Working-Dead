@@ -9,13 +9,17 @@ import Calendar from './interface/Step2/Calendar/Calendar'
 import SetOrder from './interface/Step2/SetOrder/SetOrder'
 import SavedModal from './interface/Step2/SavedModal/SavedModal'
 import AlertContent from './interface/Step2/AlertContent/AlertContent'
+import type { Period } from '../../api/type'
 interface MealSelection {
     date: string
-    mealType: 'lunch' | 'dinner'
+    period: Period
 }
-export default function User() {
+export default function User({ code }: { code?: string }) {
     const [step, setStep] = useState(0)
     const userList = [{ id: '최윤서', name: '최윤서' }, { id: '장동윤', name: '장동윤' }, { id: '이상후', name: '이상후' }, { id: '정하연', name: '정하연' }, { id: '이승준', name: '이승준' }, { id: '정세연', name: '정세연' }]
+    
+    // code가 있으면 voteId로 사용
+    console.log('Vote code:', code)
     const [currentStatusOpen, setCurrentStatusOpen] = useState(false)
     const [selectedDates, setSelectedDates] = useState<MealSelection[]>([])
     const [orderList, setOrderList] = useState<(MealSelection | null)[]>([null, null, null])
@@ -59,7 +63,7 @@ export default function User() {
             id: '1',
             date: '2025-01-01',
             dayOfWeek: '화',
-            mealType: '점심',
+            period: 'LUNCH' as Period,
             participants: [
                 { id: '최윤서', name: '최윤서', star: true },
                 { id: '장동윤', name: '장동윤', star: false },
@@ -72,7 +76,7 @@ export default function User() {
             id: '2',
             date: '2025-01-02',
             dayOfWeek: '수',
-            mealType: '점심',
+            period: 'LUNCH' as Period,
             participants: [
                 { id: '최윤서', name: '최윤서', star: false },
                 { id: '정세연', name: '정세연', star: true },
@@ -83,7 +87,7 @@ export default function User() {
             id: '3',
             date: '2025-01-03',
             dayOfWeek: '목',
-            mealType: '점심',
+            period: 'LUNCH' as Period,
             participants: [
                 { id: '최윤서', name: '최윤서', star: false },
             ]
@@ -92,7 +96,7 @@ export default function User() {
             id: '4',
             date: '2025-01-04',
             dayOfWeek: '금',
-            mealType: '점심',
+            period: 'LUNCH' as Period,
             participants: [
                 { id: '최윤서', name: '최윤서', star: false },
             ]
@@ -101,7 +105,7 @@ export default function User() {
             id: '5',
             date: '2025-01-05',
             dayOfWeek: '토',
-            mealType: '점심',
+            period: 'LUNCH' as Period,
             participants: [
                 { id: '최윤서', name: '최윤서', star: false },
             ]
@@ -110,7 +114,7 @@ export default function User() {
             id: '6',
             date: '2025-01-06',
             dayOfWeek: '일',
-            mealType: '점심',
+            period: 'LUNCH' as Period,
             participants: [
                 { id: '최윤서', name: '최윤서', star: false },
             ]

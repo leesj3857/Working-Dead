@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { voteNameContainer, voteIcon, voteTitle, 
     voteDescription, voteInput, voteLabel, voteInputField, voteTitleContainer } from './VoteName.css'
 
-export default function VoteName({ voteName, setVoteName }: { voteName: string, setVoteName: (voteName: string) => void }) {
+export default function VoteName({ voteName, setVoteName, isEditMode = false }: { voteName: string, setVoteName: (voteName: string) => void, isEditMode?: boolean }) {
     const [isFocused, setIsFocused] = useState(false)
 
     const isActive = isFocused || voteName.length > 0
@@ -12,7 +12,7 @@ export default function VoteName({ voteName, setVoteName }: { voteName: string, 
         <div className={voteNameContainer}>
             <div className={voteTitleContainer}>
                 <img src="/BlueFlake.png" alt="Blue Flake" className={voteIcon} />
-                <span className={voteTitle}>새 투표 생성</span>
+                <span className={voteTitle}>{isEditMode ? '투표 수정' : '새 투표 생성'}</span>
             </div>
             <span className={voteDescription}>투표 이름을 입력해주세요.</span>
             <div className={voteInput}>

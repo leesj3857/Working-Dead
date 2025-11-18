@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
     participantContainer, 
     participantTitle, 
@@ -20,6 +20,8 @@ import {
 import Icon from '@mdi/react';
 import { mdiPlus, mdiPencil, mdiDelete, mdiCheck, mdiClose } from '@mdi/js';
 import { accent } from '../../../../../style/color.css'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { getParticipants, addParticipant, updateParticipant, deleteParticipant } from '../../../../../api/participant'
 
 const colorSets = [
     { background: '#F64900', text: '#FFFFFF', border: 'none' },
@@ -35,19 +37,55 @@ const colorSets = [
 ]
 
 
-export default function EditParticipant({ participants, setParticipants }: { participants: string[], setParticipants: (participants: string[]) => void }) {
+export default function EditParticipant({ participants, setParticipants, voteId }: { participants: string[], setParticipants: (participants: string[]) => void, voteId: number | null }) {
+    const queryClient = useQueryClient()
     const [editingIndex, setEditingIndex] = useState<number | null>(null)
     const [editValue, setEditValue] = useState<string>('')
+    const [participantIds, setParticipantIds] = useState<number[]>([]) // 각 참가자의 ID 저장
+
+    // voteId가 있을 때 참가자 조회
+    const { data: participantsData } = useQuery({
+        queryKey: ['participants', voteId],
+        queryFn: () => getParticipants(voteId!),
+        enabled: voteId !== null,
+    })
+
+    // 참가자 데이터가 로드되면 상태 업데이트
+    useEffect(() => {
+        if (participantsData) {
+            setParticipants(participantsData.map(p => p.displayName))
+            setParticipantIds(participantsData.map(p => p.id))
+        }
+    }, [participantsData, setParticipants])
 
     const handleAddParticipant = () => {
+        if (editingIndex !== null) {
+            return
+        }
         setParticipants([...participants, ''])
         setEditingIndex(participants.length)
         setEditValue('')
     }
 
-    const handleDeleteParticipant = (index: number) => {
-        const newParticipants = participants.filter((_, i) => i !== index)
-        setParticipants(newParticipants)
+    const handleAddParticipantAPI = async (displayName: string) => {
+        if (voteId) {
+            const newParticipant = await addParticipant(voteId, displayName)
+            queryClient.invalidateQueries({ queryKey: ['participants', voteId] })
+            return newParticipant.id
+        }
+        return null
+    }
+
+    const handleDeleteParticipant = async (index: number) => {
+        if (voteId && participantIds[index]) {
+            // API 호출
+            await deleteParticipant(participantIds[index])
+            queryClient.invalidateQueries({ queryKey: ['participants', voteId] })
+        } else {
+            // voteId가 없으면 로컬 상태만 업데이트
+            const newParticipants = participants.filter((_, i) => i !== index)
+            setParticipants(newParticipants)
+        }
         if (editingIndex === index) {
             setEditingIndex(null)
             setEditValue('')
@@ -59,13 +97,30 @@ export default function EditParticipant({ participants, setParticipants }: { par
         setEditValue(participants[index])
     }
 
-    const handleSaveEdit = () => {
+    const handleSaveEdit = async () => {
         if (editingIndex !== null) {
             if (editValue.trim()) {
-                // 이름이 있으면 저장
-                const newParticipants = [...participants]
-                newParticipants[editingIndex] = editValue.trim()
-                setParticipants(newParticipants)
+                if (voteId) {
+                    // API 호출
+                    if (participantIds[editingIndex]) {
+                        // 기존 참가자 수정
+                        await updateParticipant(participantIds[editingIndex], editValue.trim())
+                        queryClient.invalidateQueries({ queryKey: ['participants', voteId] })
+                    } else {
+                        // 새 참가자 추가
+                        const newId = await handleAddParticipantAPI(editValue.trim())
+                        if (newId) {
+                            const newIds = [...participantIds]
+                            newIds[editingIndex] = newId
+                            setParticipantIds(newIds)
+                        }
+                    }
+                } else {
+                    // voteId가 없으면 로컬 상태만 업데이트
+                    const newParticipants = [...participants]
+                    newParticipants[editingIndex] = editValue.trim()
+                    setParticipants(newParticipants)
+                }
                 setEditingIndex(null)
                 setEditValue('')
             } else {
@@ -88,7 +143,11 @@ export default function EditParticipant({ participants, setParticipants }: { par
     }
 
     const getColorSet = (index: number) => {
-        return colorSets[index % colorSets.length]
+        // participantId가 있으면 id를 10으로 나눈 나머지, 없으면 배열 index 사용
+        const colorIndex = participantIds[index] 
+            ? participantIds[index] % 10 
+            : index % colorSets.length
+        return colorSets[colorIndex]
     }
 
     return (

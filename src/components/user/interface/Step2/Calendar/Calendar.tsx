@@ -16,10 +16,10 @@ import {
 import Icon from '@mdi/react'
 import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
 import { accent } from '../../../../../style/color.css'
-
+import type { Period } from '../../../../../api/type'
 interface MealSelection {
     date: string
-    mealType: 'lunch' | 'dinner'
+    period: Period
 }
 
 interface CalendarProps {
@@ -82,8 +82,8 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
     
     const toggleDate = (date: string) => {
         setSelectedDates(prev => {
-            const hasLunch = prev.some(m => m.date === date && m.mealType === 'lunch')
-            const hasDinner = prev.some(m => m.date === date && m.mealType === 'dinner')
+            const hasLunch = prev.some(m => m.date === date && m.period === 'LUNCH')
+            const hasDinner = prev.some(m => m.date === date && m.period === 'DINNER')
             const hasBoth = hasLunch && hasDinner;
 
             if (hasBoth) {
@@ -96,13 +96,13 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
                 return prev.filter(m => m.date !== date);
             } else if (!hasLunch && !hasDinner) {
                 // 아무것도 선택 안 되어 있으면 둘 다 추가
-                return [...prev, { date, mealType: 'lunch' }, { date, mealType: 'dinner' }];
+                return [...prev, { date, period: 'LUNCH' }, { date, period: 'DINNER' }];
             } else if (hasLunch && !hasDinner) {
                 // 점심만 선택되어 있으면 저녁만 추가
-                return [...prev, { date, mealType: 'dinner' }];
+                return [...prev, { date, period: 'DINNER' }];
             } else if (!hasLunch && hasDinner) {
                 // 저녁만 선택되어 있으면 점심만 추가
-                return [...prev, { date, mealType: 'lunch' }];
+                return [...prev, { date, period: 'LUNCH' }];
             } else {
                 // 그 외의 경우 변경 없음
                 return prev;
@@ -110,25 +110,25 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
         });
     }
     
-    const toggleMeal = (date: string, mealType: 'lunch' | 'dinner') => {
+    const toggleMeal = (date: string, period: Period) => {
         setSelectedDates(prev => {
-            const exists = prev.find(m => m.date === date && m.mealType === mealType)
+            const exists = prev.find(m => m.date === date && m.period === period)
             if (exists) {
                 // selectedDates에서 제거할 때 orderList에서도 제거
                 setOrderList(orderPrev => 
                     orderPrev.map(o => 
-                        o && o.date === date && o.mealType === mealType ? null : o
+                        o && o.date === date && o.period === period ? null : o
                     )
                 )
-                return prev.filter(m => !(m.date === date && m.mealType === mealType))
+                return prev.filter(m => !(m.date === date && m.period === period))
             } else {
-                return [...prev, { date, mealType }]
+                return [...prev, { date, period }]
             }
         })
     }
     
-    const isMealSelected = (date: string, mealType: 'lunch' | 'dinner') => {
-        return selectedDates.some(m => m.date === date && m.mealType === mealType)
+    const isMealSelected = (date: string, period: Period) => {
+        return selectedDates.some(m => m.date === date && m.period === period)
     }
     
     return (
@@ -153,8 +153,8 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
                             )
                         }
                         
-                        const lunchSelected = isMealSelected(dateInfo.date, 'lunch')
-                        const dinnerSelected = isMealSelected(dateInfo.date, 'dinner')
+                        const lunchSelected = isMealSelected(dateInfo.date, 'LUNCH')
+                        const dinnerSelected = isMealSelected(dateInfo.date, 'DINNER')
                         
                         return (
                             <div key={dateInfo.date} className={dateColumn}>
@@ -166,7 +166,7 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
                                 {/* 점심 */}
                                 <div 
                                     className={`${mealSlot} ${mealSlotLunch} ${lunchSelected ? mealSlotSelected : ''}`}
-                                    onClick={() => toggleMeal(dateInfo.date, 'lunch')}
+                                    onClick={() => toggleMeal(dateInfo.date, 'LUNCH')}
                                     style={lunchSelected ? {} : {}}
                                 >
                                     <Icon 
@@ -180,7 +180,7 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
                                 {/* 저녁 */}
                                 <div 
                                     className={`${mealSlot} ${mealSlotDinner} ${dinnerSelected ? mealSlotSelected : ''}`}
-                                    onClick={() => toggleMeal(dateInfo.date, 'dinner')}
+                                    onClick={() => toggleMeal(dateInfo.date, 'DINNER')}
                                     style={dinnerSelected ? {} : {}}
                                 >
                                     <Icon 
