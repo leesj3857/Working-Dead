@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // API 기본 설정
-const API_BASE_URL = "http://whend.app";
+const API_BASE_URL = "https://whend.app";
 
 // axios 인스턴스 생성
 export const apiClient = axios.create({
