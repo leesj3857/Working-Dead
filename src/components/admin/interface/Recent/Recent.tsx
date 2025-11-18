@@ -2,29 +2,21 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import DeleteModal from './DeleteModal'
 import { recentContainer, recentTitle, recentSubtitle, eventTitle, eventContainer, eventItem, eventItemContent, eventIndex, eventName, eventCreatedAt, eventItemWrapper, actionButton, editButton, deleteButton } from './Recent.css'
-
+import { getAllVotes } from '../../../../api'
+import { useQuery } from '@tanstack/react-query'
+import type { AllVotesResponse } from '../../../../api/vote'
 export default function Recent() {
+    const { data: votes } = useQuery<AllVotesResponse[]>({
+        queryKey: ['votes'],
+        queryFn: getAllVotes,
+    })
     const [openedIndex, setOpenedIndex] = useState<number | null>(null)
     const [deleteModalIndex, setDeleteModalIndex] = useState<number | null>(null)
 
-    const events = [
-        {
-            name: '임시저장',
-            createdAt: '01/01',
-        },
-        {
-            name: '임시저장',
-            createdAt: '01/01',
-        },
-        {
-            name: '임시저장',
-            createdAt: '01/01',
-        },
-        {
-            name: '임시저장',
-            createdAt: '01/01',
-        },
-    ]
+    const events = votes?.map((vote) => ({
+        name: vote.name,
+        createdAt: vote.startDate,
+    })) || []
 
     const handleItemClick = (index: number) => {
         setOpenedIndex(openedIndex === index ? null : index)
