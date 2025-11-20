@@ -68,7 +68,6 @@ export const updateSchedule = async (
 };
 
 export const getParticipantChoices = async (
-  voteId: number,
   participantId: number
 ): Promise<ParticipantChoiceResponse> => {
   const response: AxiosResponse<ParticipantChoiceResponse> = await apiClient.get(

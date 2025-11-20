@@ -42,7 +42,7 @@ export default function User({ code }: { code?: string }) {
     // 선택한 참가자의 기존 선택사항 조회
     const { data: participantChoices } = useQuery({
         queryKey: ['participant-choices', voteId, selectedParticipantId],
-        queryFn: () => getParticipantChoices(voteId!, selectedParticipantId!),
+        queryFn: () => getParticipantChoices(selectedParticipantId!),
         enabled: !!voteId && !!selectedParticipantId,
     })
     
