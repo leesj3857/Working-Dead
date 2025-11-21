@@ -124,10 +124,10 @@ export default function User({ code }: { code?: string }) {
             handleDateAlert()
             return
         }
-        if(orderList.every(o => o === null)) {
-            handleOrderAlert()
-            return
-        }
+        // if(orderList.every(o => o === null)) {
+        //     handleOrderAlert()
+        //     return
+        // }
         setAlertType(null)
         setAlertMessage('')
         
