@@ -1,10 +1,10 @@
-import { setOrderContainer, orderIcon, orderTitle, 
+import { setOrderContainer, setOrderCollapsed, setOrderExpanded, orderTitle, 
     orderDescription, orderTitleContainer, priorityList, priorityItem,
     priorityNumber, prioritySlot, divider, datesList, dateChip, 
-    dateChipSelected, dateText } from './SetOrder.css'
+    dateChipSelected, dateText, orderHighlight } from './SetOrder.css'
 import Icon from '@mdi/react'
 import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
-import { subtle1 } from '../../../../../style/color.css'
+import { subtle1, primarySub1 } from '../../../../../style/color.css'
 import type { Period } from '../../../../../api/type'
 
 interface MealSelection {
@@ -16,9 +16,10 @@ interface SetOrderProps {
     selectedDates: MealSelection[]
     orderList: (MealSelection | null)[]
     setOrderList: React.Dispatch<React.SetStateAction<(MealSelection | null)[]>>
+    collapsed?: boolean
 }
 
-export default function SetOrder({ selectedDates, orderList, setOrderList }: SetOrderProps) {
+export default function SetOrder({ selectedDates, orderList, setOrderList, collapsed = false }: SetOrderProps) {
 
     const weekdayMap: { [key: number]: string } = {
         0: 'S', // Sunday
@@ -62,69 +63,76 @@ export default function SetOrder({ selectedDates, orderList, setOrderList }: Set
         setOrderList(newOrderList)
     }
     
+    const containerClass = `${setOrderContainer} ${collapsed ? setOrderCollapsed : setOrderExpanded}`
+
     return (
-        <div className={setOrderContainer}>
+        <div className={containerClass}>
             <div className={orderTitleContainer}>
-                <img src="/RedFlake.png" alt="Red Flake" className={orderIcon} />
-                <span className={orderTitle}>날짜 우선순위 설정</span>
+                <span className={orderTitle}>우선순위 설정<span style={{ color: primarySub1 }}>*</span></span>
+                <span className={orderHighlight}>(선택)</span>
             </div>
-            <span className={orderDescription}>아래 날짜 중 원하는 날짜를 클릭해서 추가해주세요</span>
-            
-            {/* 우선순위 슬롯 */}
-            <div className={priorityList}>
-                {orderList.map((order, index) => (
-                    <div key={index} className={priorityItem}>
-                        <div className={priorityNumber}>{index + 1}</div>
-                        <div className={prioritySlot}>
-                            {order && (
-                                <>
-                                    <Icon 
-                                        path={order.period === 'LUNCH' ? mdiWeatherSunny : mdiWeatherNight}
-                                        size={0.6}
-                                        color={subtle1}
-                                    />
-                                    <span className={dateText}>
-                                        {formatDate(order.date)} — {order.period === 'LUNCH' ? '점심' : '저녁'}
-                                    </span>
-                                    {/* <div className={closeIcon} onClick={() => handleRemoveOrder(index)}>
-                                        <Icon path={mdiClose} size={0.6} color={subtle1} />
-                                    </div> */}
-                                </>
-                            )}
-                        </div>
+
+            {!collapsed && (
+                <>
+                    <span className={orderDescription}>아래 날짜 중 원하는 날짜를 클릭해서 추가해주세요</span>
+                    
+                    {/* 우선순위 슬롯 */}
+                    <div className={priorityList}>
+                        {orderList.map((order, index) => (
+                            <div key={index} className={priorityItem}>
+                                <div className={priorityNumber}>{index + 1}</div>
+                                <div className={prioritySlot}>
+                                    {order && (
+                                        <>
+                                            <Icon 
+                                                path={order.period === 'LUNCH' ? mdiWeatherSunny : mdiWeatherNight}
+                                                size={0.6}
+                                                color={subtle1}
+                                            />
+                                            <span className={dateText}>
+                                                {formatDate(order.date)} — {order.period === 'LUNCH' ? '점심' : '저녁'}
+                                            </span>
+                                            {/* <div className={closeIcon} onClick={() => handleRemoveOrder(index)}>
+                                                <Icon path={mdiClose} size={0.6} color={subtle1} />
+                                            </div> */}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
-            
-            {/* 구분선 */}
-            <div className={divider} />
-            
-            {/* 선택 가능한 날짜 목록 */}
-            <div className={datesList}>
-                {selectedDates.map((meal, index) => {
-                    const isSelected = isDateInOrderList(meal)
-                    return (
-                        <div 
-                            key={`${meal.date}-${meal.period}-${index}`}
-                            className={`${dateChip} ${isSelected ? dateChipSelected : ''}`}
-                            onClick={() => handleDateClick(meal)}
-                            style={{
-                                cursor: isSelected ? 'default' : 'pointer',
-                                opacity: isSelected ? 0.7 : 1,
-                            }}
-                        >
-                            <Icon 
-                                path={meal.period === 'LUNCH' ? mdiWeatherSunny : mdiWeatherNight}
-                                size={0.6}
-                                color={isSelected ? '#FFFFFF' : subtle1}
-                            />
-                            <span className={dateText} style={{ color: isSelected ? '#FFFFFF' : subtle1 }}>
-                                {formatDate(meal.date)} — {meal.period === 'LUNCH' ? '점심' : '저녁'}
-                            </span>
-                        </div>
-                    )
-                })}
-            </div>
+                    
+                    {/* 구분선 */}
+                    <div className={divider} />
+                    
+                    {/* 선택 가능한 날짜 목록 */}
+                    <div className={datesList}>
+                        {selectedDates.map((meal, index) => {
+                            const isSelected = isDateInOrderList(meal)
+                            return (
+                                <div 
+                                    key={`${meal.date}-${meal.period}-${index}`}
+                                    className={`${dateChip} ${isSelected ? dateChipSelected : ''}`}
+                                    onClick={() => handleDateClick(meal)}
+                                    style={{
+                                        cursor: isSelected ? 'default' : 'pointer',
+                                        opacity: isSelected ? 0.7 : 1,
+                                    }}
+                                >
+                                    <Icon 
+                                        path={meal.period === 'LUNCH' ? mdiWeatherSunny : mdiWeatherNight}
+                                        size={0.6}
+                                        color={isSelected ? '#FFFFFF' : subtle1}
+                                    />
+                                    <span className={dateText} style={{ color: isSelected ? '#FFFFFF' : subtle1 }}>
+                                        {formatDate(meal.date)} — {meal.period === 'LUNCH' ? '점심' : '저녁'}
+                                    </span>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </>
+            )}
         </div>
     )
 }

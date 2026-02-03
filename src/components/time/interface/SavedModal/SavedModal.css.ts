@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
-import { titleLarge, labelLarge, headlineSmall } from '../../../../../style/typography.css'
-import { subtle1, accent } from '../../../../../style/color.css'
+import { titleLarge, labelLarge, headlineSmall } from '../../../../style/typography.css'
+import { subtle1, accent } from '../../../../style/color.css'
 
 export const modalOverlay = style({
     position: 'fixed',

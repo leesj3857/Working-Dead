@@ -1,35 +1,54 @@
 import { style } from '@vanilla-extract/css'
-import { titleLarge, labelMedium, labelLarge, bodySmall } from '../../../../../style/typography.css'
-import { accent, subtle1, subtle2, subtle3 } from '../../../../../style/color.css'
+import { titleLarge, labelMedium, labelLarge, bodySmall, titleMedium } from '../../../../../style/typography.css'
+import { accent, subtle1, subtle2, subtle3, primarySub1, background } from '../../../../../style/color.css'
 
 export const setOrderContainer = style({
+    position: 'absolute',
+    left: 0,
+    right: 0,
     display: 'flex',
     flexDirection: 'column',
-    padding: '17px',
-    borderRadius: '10px',
-    backgroundColor: '#FFFFFF',
-    boxShadow: '0px 3px 6px 0px rgba(0, 0, 0, 0.1)',
-    marginBottom: '20px',
+    backgroundColor: background,
+    boxSizing: 'border-box',
+    transition: 'top 0.3s ease, border-radius 0.3s ease, border-top 0.3s ease, box-shadow 0.3s ease',
 })
 
-export const orderIcon = style({
-    width: '20px',
-    height: 'auto',
+export const setOrderCollapsed = style({
+    borderTopLeftRadius: '20px',
+    borderTopRightRadius: '20px',
+    borderTop: 'none',
+    padding: '16px 20px 4px',
+    boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.12)',
+    top: 'calc(100% - 49px)',
+})
+
+export const setOrderExpanded = style({
+    borderTopLeftRadius: '0px',
+    borderTopRightRadius: '0px',
+    borderTop: `1px solid ${subtle2}`,
+    padding: '16px 20px 24px',
+    boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.08)',
+    top: '160px',
 })
 
 export const orderTitle = style([
-    titleLarge,
-    { color: accent, marginLeft: '10px', marginBottom: '5px' }
+    titleMedium,
+    { color: accent, marginBottom: '5px' }
+])
+
+export const orderHighlight = style([
+    labelMedium,
+    { color: primarySub1, marginBottom: '5px' }
 ])
 
 export const orderDescription = style([
     labelMedium,
-    { color: subtle1, marginBottom: '15px' }
+    { color: subtle1, marginBottom: '30px' }
 ])
 
 export const orderTitleContainer = style({
     display: 'flex',
-    alignItems: 'start',
+    alignItems: 'end',
 })
 
 export const priorityList = style({
@@ -42,6 +61,7 @@ export const priorityList = style({
 export const priorityItem = style({
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '10px',
 })
 
@@ -70,6 +90,7 @@ export const prioritySlot = style({
     paddingLeft: '10px',
     paddingRight: '10px',
     gap: '8px',
+    maxWidth: '260px',
 })
 
 export const divider = style({
@@ -102,7 +123,7 @@ export const dateChip = style([
         color: subtle1,
         cursor: 'pointer',
         transition: 'all 0.2s ease',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'transparent',
         width: '80%',
         minWidth: '200px',
     }

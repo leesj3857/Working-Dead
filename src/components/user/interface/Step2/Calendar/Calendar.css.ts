@@ -5,9 +5,7 @@ import { labelSmall, bodySmall } from '../../../../../style/typography.css'
 export const calendarContainer = style({
     width: '100%',
     borderTop: `1px solid ${subtle2}`,
-    borderBottom: `1px solid ${subtle2}`,
     padding: '10px 17px',
-    marginBottom: '20px',
 })
 
 export const dateContainer = style({

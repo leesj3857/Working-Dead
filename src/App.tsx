@@ -10,7 +10,7 @@ function App() {
   return (
     <div 
       className={appContainer} 
-      style={{ backgroundColor: isAdmin ? background : subtle3 }}
+      style={{ backgroundColor: background }}
     >
       <Header />
       <Outlet />

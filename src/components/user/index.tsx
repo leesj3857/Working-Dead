@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import TopNav from './interface/TopNav/TopNav'
 import Description from './interface/Description/Description'
-import SelectUser from './interface/Step1/SelectUser/SelectUser'
-import SaveButton from './interface/Step2/SaveButton/SaveButton'
+import NameModal from './interface/Step1/NameModal/NameModal'
 import CurrentStatus from './interface/Step2/CurrentStatusBtn/CurrentStatus'
 import CurrentStatusModal from './interface/Step2/CurrentStatusModal/CurrentStatusModal'
 import Calendar from './interface/Step2/Calendar/Calendar'
@@ -19,9 +19,10 @@ interface MealSelection {
 import { getVote } from '../../api/vote'
 import { getParticipants, getParticipantChoices, updateSchedule } from '../../api/participant'
 export default function User({ code }: { code?: string }) {
-    const [step, setStep] = useState(0)
-    const [selectedParticipantId, setSelectedParticipantId] = useState<number | null>(null)
-    
+    const [selectedParticipantId, setSelectedParticipantId] = useState<number | null>(1)
+    const [userName, setUserName] = useState<string>('')
+    const [isNameModalOpen, setIsNameModalOpen] = useState<boolean>(true)
+    const [currentTab, setCurrentTab] = useState<'priority' | 'time'>('time')
     // code가 있으면 voteId로 사용
     const { data: voteId } = useQuery({
         queryKey: ['voteId', code],
@@ -49,11 +50,7 @@ export default function User({ code }: { code?: string }) {
     
     console.log('Vote code:', code, voteId)
     const [currentStatusOpen, setCurrentStatusOpen] = useState(false)
-    
-    // 원본 데이터
-    const [originalSelectedDates, setOriginalSelectedDates] = useState<MealSelection[]>([])
-    const [originalOrderList, setOriginalOrderList] = useState<(MealSelection | null)[]>([null, null, null])
-    
+
     // 작업용 복사본
     const [selectedDates, setSelectedDates] = useState<MealSelection[]>([])
     const [orderList, setOrderList] = useState<(MealSelection | null)[]>([null, null, null])
@@ -63,10 +60,6 @@ export default function User({ code }: { code?: string }) {
     const handleDateAlert = () => {
         setAlertType('date')
         setAlertMessage('날짜를 선택해주세요')
-    }
-    const handleOrderAlert = () => {
-        setAlertType('order')
-        setAlertMessage('시간대를 선택해주세요')
     }
     // 날짜 형식 변환: "2025-11-25" -> "11/25"
     const formatDateToCalendar = (dateStr: string): string => {
@@ -78,6 +71,7 @@ export default function User({ code }: { code?: string }) {
     
     // 참가자 선택사항 로드
     useEffect(() => {
+        console.log('participantChoices', participantChoices)
         if (participantChoices) {
             // selections에서 selected: true인 항목들을 selectedDates로 변환
             const selected: MealSelection[] = participantChoices.selections
@@ -102,8 +96,6 @@ export default function User({ code }: { code?: string }) {
                 ordered[2] || null
             ]
             
-            setOriginalSelectedDates(selected)
-            setOriginalOrderList(orderArray)
             setSelectedDates([...selected])
             setOrderList([...orderArray])
         }
@@ -113,12 +105,6 @@ export default function User({ code }: { code?: string }) {
     const startDate = new Date(vote?.startDate ?? '')
     const endDate = new Date(vote?.endDate ?? '')
     
-    const onNext = ({ id }: { id: number | null }) => {
-        if (id) {
-            setSelectedParticipantId(id)
-            setStep(step + 1)
-        }
-    }
     const onSaveClick = async () => {
         if(selectedDates.length === 0 ) {
             handleDateAlert()
@@ -182,8 +168,6 @@ export default function User({ code }: { code?: string }) {
             })
             
             // 원본 데이터 업데이트
-            setOriginalSelectedDates([...selectedDates])
-            setOriginalOrderList([...orderList])
         }
         
         setSavedModalOpen(true)
@@ -191,28 +175,56 @@ export default function User({ code }: { code?: string }) {
     
     const handleExit = () => {
         setSavedModalOpen(false)
-        setStep(0)
         setSelectedParticipantId(null)
         setSelectedDates([])
         setOrderList([null, null, null])
-        setOriginalSelectedDates([])
-        setOriginalOrderList([null, null, null])
+    }
+
+    const handleSaveName = (name: string) => {
+        setUserName(name)
+        setIsNameModalOpen(false)
     }
 
     return (
-        <div style={{ paddingBottom: '70px' }}>
-            <TopNav step={step} setStep={setStep} />
-            <Description title={step === 0 ? '본인 선택' : '가능한 시간'} description={step === 0 ? '가능한 일정을 투표할 본인 이름을 선택해주세요' : '가능한 날짜와 시간대를 모두 선택해주세요'} />
-            {step === 0 && <SelectUser userList={participants?.map(participant => ({ id: participant.id, name: participant.displayName })) ?? []} onNext={onNext} />}
-            {step === 1 && 
+        <div style={{ flex: 1 }}>
+            <NameModal isOpen={isNameModalOpen} initialName={userName} onSave={handleSaveName} />
+            <Description 
+                title={'가능한 시간'}
+                description={'가능한 날짜와 시간대를 모두 선택해주세요'}
+                currentTab={currentTab}
+                onChangeTab={setCurrentTab}
+            />
             <>
-                <Calendar startDate={startDate} endDate={endDate} selectedDates={selectedDates} setSelectedDates={setSelectedDates} setOrderList={setOrderList} />
-                <AlertContent message={alertMessage} show={alertType === 'date'} />
-                <SetOrder selectedDates={selectedDates} orderList={orderList} setOrderList={setOrderList} />
-                <AlertContent message={alertMessage} show={alertType === 'order'} />
-                <SaveButton onSaveClick={onSaveClick} />
-                <CurrentStatus setCurrentStatusOpen={setCurrentStatusOpen} />
-            </>}
+                <AnimatePresence initial={false}>
+                    {currentTab === 'time' && (
+                        <motion.div
+                            key="calendar"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            style={{ overflow: 'hidden' }}
+                        >
+                            <Calendar
+                                startDate={startDate}
+                                endDate={endDate}
+                                selectedDates={selectedDates}
+                                setSelectedDates={setSelectedDates}
+                                setOrderList={setOrderList}
+                            />
+                            <AlertContent message={alertMessage} show={alertType === 'date'} />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <SetOrder
+                    selectedDates={selectedDates}
+                    orderList={orderList}
+                    setOrderList={setOrderList}
+                    collapsed={currentTab === 'time'}
+                />
+                <CurrentStatus setCurrentStatusOpen={setCurrentStatusOpen} onSaveClick={onSaveClick} />
+            </>
             {currentStatusOpen && voteId && <CurrentStatusModal isOpen={currentStatusOpen} voteId={voteId} onClose={() => setCurrentStatusOpen(false)} />}
             {savedModalOpen && <SavedModal onEdit={() => setSavedModalOpen(false)} onExit={handleExit} />}
         </div>

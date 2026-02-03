@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Icon from '@mdi/react'
-import { mdiSquareEditOutline, mdiExitToApp, mdiCalendarCheck } from '@mdi/js'
+import { mdiSquareEditOutline, mdiExitToApp, mdiClockTimeThreeOutline } from '@mdi/js'
 import { 
     modalOverlay, 
     modalContent, 
@@ -39,9 +39,9 @@ export default function SavedModal({ onEdit, onExit }: SavedModalProps) {
                     transition={{ type: "spring", stiffness: 500, damping: 25 }}
                 >
                     <div className={checkIconWrapper}>
-                        <Icon path={mdiCalendarCheck} size={1.5} className={checkIcon} />
+                        <Icon path={mdiClockTimeThreeOutline} size={1.5} className={checkIcon} />
                     </div>
-                    <span className={modalTitle}>일정이 저장되었습니다!</span>
+                    <span className={modalTitle}>시간이 저장되었습니다!</span>
 
                     <div className={buttonContainer}>
                         <button className={editButton} onClick={onEdit}>

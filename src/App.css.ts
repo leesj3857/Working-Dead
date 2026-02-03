@@ -5,5 +5,7 @@ export const appContainer = style({
   width: '100%',
   transition: "background-color 0.3s ease",
   padding: "20px 16px",
-  overflow: 'auto'
+  overflow: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
 });

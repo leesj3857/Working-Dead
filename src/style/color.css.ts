@@ -3,7 +3,7 @@ export const accent = '#19191B';
 export const subtle1 = '#6E6A68';
 export const subtle2 = '#C0BBB7';
 export const subtle3 = '#DBD8D3';
-export const background = '#F5F5F7';
+export const background = '#F3F0EB';
 
 // Primary Colors (2행)
 export const primaryMain1 = '#F64900';

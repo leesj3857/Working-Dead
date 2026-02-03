@@ -51,7 +51,15 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API 요청 오류:", error);
+    // 백엔드가 내려가 있는 동안 프론트 개발 시 콘솔이 너무 더러워지는 것을 방지
+    // (실패 자체는 각 API 함수에서 try/catch로 더미 fallback 처리)
+    console.warn("API 요청 오류:", {
+      message: error?.message,
+      code: error?.code,
+      status: error?.response?.status,
+      url: error?.config?.url,
+      method: error?.config?.method,
+    });
     return Promise.reject(error);
   }
 );
