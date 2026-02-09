@@ -7,7 +7,7 @@ export default function Header() {
 
   return (
     <header className={header}>
-      <img src="/logo.png" alt="When:D Logo" className={logo} />
+      <img src="/scheduly-logo-v2.svg" alt="When:D Logo" className={logo} />
       <div className={nameContainer}>
         <span className={name}>Name</span>
         <img 

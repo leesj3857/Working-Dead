@@ -22,10 +22,12 @@ export const nameContainer = style({
   gap: '10px',
 })
 
-export const name = style({
-  fontSize: bodyLarge,
-  color: primaryMain1,
-})
+export const name = style([
+  bodyLarge,
+  {
+    color: primaryMain1,
+  }
+])
 
 export const icon = style({
   width: '24px',

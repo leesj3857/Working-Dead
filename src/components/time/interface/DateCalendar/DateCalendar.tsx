@@ -52,22 +52,53 @@ export default function DateCalendar({ period, selectedTime, onSelectTime }: Dat
         return all.sort((a, b) => toMinutes(a) - toMinutes(b))
     }, [extraTimes])
 
+    const parseAndNormalizeTime = (input: string): string | null => {
+        const trimmed = input.trim()
+
+        // HH:MM 또는 H:MM 형식
+        const withColon = /^\d{1,2}:\d{2}$/
+        if (withColon.test(trimmed)) {
+            const [h, m] = trimmed.split(':').map(Number)
+            if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+            }
+            return null
+        }
+
+        // HHMM 또는 HMM 형식 (콜론 없음)
+        const withoutColon = /^\d{3,4}$/
+        if (withoutColon.test(trimmed)) {
+            let h: number, m: number
+            if (trimmed.length === 4) {
+                h = parseInt(trimmed.slice(0, 2), 10)
+                m = parseInt(trimmed.slice(2, 4), 10)
+            } else {
+                h = parseInt(trimmed.slice(0, 1), 10)
+                m = parseInt(trimmed.slice(1, 3), 10)
+            }
+            if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+            }
+        }
+        return null
+    }
+
     const handlePlusClick = () => {
-        const value = window.prompt('추가할 시간을 입력하세요 (HH:MM)')
+        const value = window.prompt('추가할 시간을 입력하세요 (HH:MM 또는 HHMM)')
         if (!value) return
 
-        const isValid = /^\d{1,2}:\d{2}$/.test(value)
-        if (!isValid) {
-            alert('HH:MM 형식으로 입력해주세요.')
+        const normalizedTime = parseAndNormalizeTime(value)
+        if (!normalizedTime) {
+            alert('HH:MM 또는 HHMM 형식으로 입력해주세요. (예: 11:30, 1130)')
             return
         }
 
-        if (times.includes(value)) {
+        if (times.includes(normalizedTime)) {
             alert('이미 존재하는 시간입니다.')
             return
         }
 
-        setExtraTimes(prev => [...prev, value])
+        setExtraTimes(prev => [...prev, normalizedTime])
     }
 
     const lastIndex = times.length - 1

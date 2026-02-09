@@ -189,7 +189,7 @@ export default function User({ code }: { code?: string }) {
         <div style={{ flex: 1 }}>
             <NameModal isOpen={isNameModalOpen} initialName={userName} onSave={handleSaveName} />
             <Description 
-                title={'가능한 시간'}
+                title={'날짜 선택'}
                 description={'가능한 날짜와 시간대를 모두 선택해주세요'}
                 currentTab={currentTab}
                 onChangeTab={setCurrentTab}
