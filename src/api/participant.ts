@@ -14,9 +14,6 @@ const mockParticipants = (voteId: number): Participant[] => [
 ].map((p) => ({ ...p, id: p.id + (voteId - 1) * 1000 }));
 
 const mockPriorities = (): Priority[] => [
-  { date: "2026-02-03", period: "LUNCH", priorityIndex: 0, weight: 3 },
-  { date: "2026-02-03", period: "DINNER", priorityIndex: 1, weight: 2 },
-  { date: "2026-02-04", period: "LUNCH", priorityIndex: 2, weight: 1 },
 ];
 
 const mockScheduleResponse = (participantId: number): ScheduleResponse => ({

@@ -243,6 +243,7 @@ export const getVoteResult = async (
     const response: AxiosResponse<VoteResultResponse> = await apiClient.get(
       `/votes/${voteId}/result`
     );
+    return mockVoteResult(voteId);
     return response.data;
   } catch (e) {
     warnFallback("getVoteResult");
