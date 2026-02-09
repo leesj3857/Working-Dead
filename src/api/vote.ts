@@ -8,9 +8,9 @@ const warnFallback = (name: string) => {
 };
 
 const mockParticipants = (voteId: number): Participant[] => [
-  { id: 1, displayName: "홍길동", loggedIn: true },
-  { id: 2, displayName: "김철수", loggedIn: false },
-  { id: 3, displayName: "이영희", loggedIn: false },
+  { id: 1, displayName: "최윤서", loggedIn: true },
+  { id: 2, displayName: "장동윤", loggedIn: false },
+  { id: 3, displayName: "이상후", loggedIn: false },
 ].map((p) => ({ ...p, id: p.id + (voteId - 1) * 1000 }));
 
 const mockVote = (id: number): VoteResponse => ({
@@ -68,13 +68,13 @@ const mockVoteResult = (voteId: number): VoteResultResponse => {
       voters: [
         {
           participantId: participants[0]?.id ?? 1,
-          participantName: participants[0]?.displayName ?? "홍길동",
+          participantName: participants[0]?.displayName ?? "최윤서",
           priorityIndex: 0,
           weight: 3,
         },
         {
           participantId: participants[1]?.id ?? 2,
-          participantName: participants[1]?.displayName ?? "김철수",
+          participantName: participants[1]?.displayName ?? "장동윤",
           priorityIndex: 1,
           weight: 2,
         },

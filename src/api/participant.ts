@@ -8,9 +8,9 @@ const warnFallback = (name: string) => {
 };
 
 const mockParticipants = (voteId: number): Participant[] => [
-  { id: 1, displayName: "홍길동", loggedIn: true },
-  { id: 2, displayName: "김철수", loggedIn: false },
-  { id: 3, displayName: "이영희", loggedIn: false },
+  { id: 1, displayName: "최윤서", loggedIn: true },
+  { id: 2, displayName: "장동윤", loggedIn: false },
+  { id: 3, displayName: "이상후", loggedIn: false },
 ].map((p) => ({ ...p, id: p.id + (voteId - 1) * 1000 }));
 
 const mockPriorities = (): Priority[] => [
