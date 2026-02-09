@@ -8,7 +8,7 @@ import CurrentStatus from './interface/CurrentStatusBtn/CurrentStatus'
 import CurrentStatusModal from './interface/CurrentStatusModal/CurrentStatusModal'
 import SavedModal from './interface/SavedModal/SavedModal'
 export default function Time() {
-    const [period] = useState<Period>('DINNER')
+    const [period] = useState<Period>('LUNCH')
     const [selectedTime, setSelectedTime] = useState<string | null>(null)
     const [currentStatusOpen, setCurrentStatusOpen] = useState(false)
     const [voteId, setVoteId] = useState<number>(1)

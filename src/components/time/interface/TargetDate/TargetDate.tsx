@@ -27,7 +27,7 @@ export default function TargetDate({ period }: TargetDateProps) {
             <div className={targetDateRow}>
                 <div className={targetDateInfo}>
                     <Icon path={mdiLicense} size={1.4} color={subtle1} />
-                    <span className={targetDateTitle}>2026년 1월 27일 (화)</span>
+                    <span className={targetDateTitle}>2026년 2월 3일 (화)</span>
                 </div>
                 <div
                     className={`${badgeContainer} ${isLunch ? badgeLunch : badgeDinner}`}
