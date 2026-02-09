@@ -6,7 +6,6 @@ export const currentStatusButton = style({
     position: 'fixed',
     width: 'fit-content',
     whiteSpace: 'nowrap',
-    bottom: '60px',
     right: '50%',
     transform: 'translateX(50%)',
     display: 'flex',
@@ -19,6 +18,15 @@ export const currentStatusButton = style({
     backgroundColor: accent,
     border: 'none',
     boxShadow: '0px 3px 7px 0px rgba(0, 0, 0, 0.2)',
+    transition: 'bottom 0.3s ease',
+})
+
+export const currentStatusButtonTime = style({
+    bottom: '60px',
+})
+
+export const currentStatusButtonPriority = style({
+    bottom: '10px',
 })
 
 export const currentStatusIcon = style({

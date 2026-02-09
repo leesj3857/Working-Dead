@@ -223,7 +223,7 @@ export default function User({ code }: { code?: string }) {
                     setOrderList={setOrderList}
                     collapsed={currentTab === 'time'}
                 />
-                <CurrentStatus setCurrentStatusOpen={setCurrentStatusOpen} onSaveClick={onSaveClick} />
+                <CurrentStatus currentTab={currentTab} setCurrentStatusOpen={setCurrentStatusOpen} onSaveClick={onSaveClick} />
             </>
             {currentStatusOpen && voteId && <CurrentStatusModal isOpen={currentStatusOpen} voteId={voteId} onClose={() => setCurrentStatusOpen(false)} />}
             {savedModalOpen && <SavedModal onEdit={() => setSavedModalOpen(false)} onExit={handleExit} />}

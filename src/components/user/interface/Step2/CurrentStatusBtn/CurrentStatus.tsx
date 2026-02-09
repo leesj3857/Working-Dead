@@ -1,13 +1,22 @@
-import { currentStatusButton, currentStatusText, currentStatusDivider, saveButtonIcon, currentStatusSection } from './CurrentStatus.css'
+import {
+    currentStatusButton,
+    currentStatusButtonTime,
+    currentStatusButtonPriority,
+    currentStatusText,
+    currentStatusDivider,
+    saveButtonIcon,
+    currentStatusSection,
+} from './CurrentStatus.css'
 import Icon from '@mdi/react'
 import { mdiCalendarMonthOutline } from '@mdi/js'
 
 interface CurrentStatusProps {
+    currentTab: string
     setCurrentStatusOpen: (isOpen: boolean) => void
     onSaveClick: () => void
 }
 
-export default function CurrentStatus({ setCurrentStatusOpen, onSaveClick }: CurrentStatusProps) {
+export default function CurrentStatus({ currentTab, setCurrentStatusOpen, onSaveClick }: CurrentStatusProps) {
     const handleCurrentStatusClick = () => {
         setCurrentStatusOpen(true)
     }
@@ -17,7 +26,9 @@ export default function CurrentStatus({ setCurrentStatusOpen, onSaveClick }: Cur
     }
 
     return (
-        <div className={currentStatusButton}>
+        <div
+            className={`${currentStatusButton} ${currentTab === 'time' ? currentStatusButtonTime : currentStatusButtonPriority}`}
+        >
             <button type="button" className={currentStatusSection} onClick={handleCurrentStatusClick}>
                 <Icon path={mdiCalendarMonthOutline} size={0.8} color="#FFFFFF" />
                 <span className={currentStatusText}>투표 현황</span>
