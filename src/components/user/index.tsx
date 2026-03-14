@@ -209,9 +209,7 @@ export default function User({
     
     const handleExit = () => {
         setSavedModalOpen(false)
-        setSelectedParticipantId(null)
-        setSelectedDates([])
-        setOrderList([null, null, null])
+        location.href = "kakaotalk://";
     }
 
     const handleSaveName = async (name: string) => {
