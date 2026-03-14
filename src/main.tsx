@@ -18,7 +18,7 @@ const router = createBrowserRouter([
       { index: true, element: <User /> },
       { path: 'admin', element: <Admin /> },
       { path: 'v/:code', element: <User /> },
-      { path: 'time', element: <Time /> },
+      { path: 'time/:pollId', element: <Time /> },
     ],
   },
 ])

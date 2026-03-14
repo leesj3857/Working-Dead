@@ -10,46 +10,80 @@ import SetOrder from './interface/Step2/SetOrder/SetOrder'
 import SavedModal from './interface/Step2/SavedModal/SavedModal'
 import AlertContent from './interface/Step2/AlertContent/AlertContent'
 import type { Period, Priority } from '../../api/type'
+import type { VoteResponse } from '../../api/vote'
 import { useQuery } from '@tanstack/react-query'
-import { getVoteIdByCode } from '../../api/vote'
+import { getParticipantChoices, updateSchedule, addParticipant } from '../../api/participant'
+
 interface MealSelection {
     date: string
     period: Period
 }
-import { getVote } from '../../api/vote'
-import { getParticipants, getParticipantChoices, updateSchedule } from '../../api/participant'
-export default function User({ code }: { code?: string }) {
-    const [selectedParticipantId, setSelectedParticipantId] = useState<number | null>(1)
+
+const PARTICIPANT_STORAGE_KEY_PREFIX = 'vote_participant_'
+
+interface StoredParticipant {
+    voteId: number
+    participantId: number
+    name: string
+}
+
+const getStoredParticipant = (voteId?: number): StoredParticipant | null => {
+    if (!voteId) return null
+    try {
+        const raw = localStorage.getItem(`${PARTICIPANT_STORAGE_KEY_PREFIX}${voteId}`)
+        if (!raw) return null
+        const parsed = JSON.parse(raw) as StoredParticipant
+        if (!parsed?.participantId) return null
+        return parsed
+    } catch {
+        return null
+    }
+}
+
+const saveStoredParticipant = (data: StoredParticipant) => {
+    try {
+        localStorage.setItem(
+            `${PARTICIPANT_STORAGE_KEY_PREFIX}${data.voteId}`,
+            JSON.stringify(data),
+        )
+    } catch {
+        // ignore
+    }
+}
+
+export default function User({
+    voteId,
+    vote,
+}: {
+    voteId?: number
+    vote?: VoteResponse
+}) {
+    const [selectedParticipantId, setSelectedParticipantId] = useState<number | null>(null)
     const [userName, setUserName] = useState<string>('')
     const [isNameModalOpen, setIsNameModalOpen] = useState<boolean>(true)
     const [currentTab, setCurrentTab] = useState<'priority' | 'time'>('time')
-    // code가 있으면 voteId로 사용
-    const { data: voteId } = useQuery({
-        queryKey: ['voteId', code],
-        queryFn: () => getVoteIdByCode(code ?? ''),
-        enabled: !!code,
-    })
-    const { data: vote } = useQuery({
-        queryKey: ['vote', voteId],
-        queryFn: () => getVote(voteId ?? 0),
-        enabled: !!voteId,
-    })
-    const { data: participants } = useQuery({
-        queryKey: ['participants', voteId],
-        queryFn: () => getParticipants(voteId ?? 0),
-        enabled: !!voteId,
-    })
-    
+
     // 선택한 참가자의 기존 선택사항 조회
     const { data: participantChoices } = useQuery({
         queryKey: ['participant-choices', voteId, selectedParticipantId],
         queryFn: () => getParticipantChoices(selectedParticipantId!),
         enabled: !!voteId && !!selectedParticipantId,
+        refetchOnWindowFocus: false,
     })
     
-    
-    console.log('Vote code:', code, voteId)
+
     const [currentStatusOpen, setCurrentStatusOpen] = useState(false)
+
+    // 로컬스토리지에 저장된 참가자 정보가 있으면 불러와서 자동 설정
+    useEffect(() => {
+        if (!voteId) return
+        const stored = getStoredParticipant(voteId)
+        if (stored) {
+            setSelectedParticipantId(stored.participantId)
+            setUserName(stored.name)
+            setIsNameModalOpen(false)
+        }
+    }, [voteId])
 
     // 작업용 복사본
     const [selectedDates, setSelectedDates] = useState<MealSelection[]>([])
@@ -118,10 +152,10 @@ export default function User({ code }: { code?: string }) {
         setAlertMessage('')
         
         // API 호출하여 저장
-        if (selectedParticipantId && voteId) {
+        if (selectedParticipantId && voteId && vote) {
             // schedules 생성: 모든 날짜를 순회하며 선택된 period 확인
-            const startDateObj = new Date(vote!.startDate)
-            const endDateObj = new Date(vote!.endDate)
+            const startDateObj = new Date(vote.startDate)
+            const endDateObj = new Date(vote.endDate)
             const schedules = []
             
             for (let d = new Date(startDateObj); d <= endDateObj; d.setDate(d.getDate() + 1)) {
@@ -180,9 +214,27 @@ export default function User({ code }: { code?: string }) {
         setOrderList([null, null, null])
     }
 
-    const handleSaveName = (name: string) => {
+    const handleSaveName = async (name: string) => {
         setUserName(name)
-        setIsNameModalOpen(false)
+
+        if (!voteId) {
+            setIsNameModalOpen(false)
+            return
+        }
+
+        try {
+            const participant = await addParticipant(voteId, name)
+            if(!participant) return
+            setSelectedParticipantId(participant.id)
+            saveStoredParticipant({
+                voteId,
+                participantId: participant.id,
+                name,
+            })
+            setIsNameModalOpen(false)
+        } catch {
+            // ignore
+        }
     }
 
     return (
