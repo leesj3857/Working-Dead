@@ -56,7 +56,7 @@ export default function User({
     const [isNameModalOpen, setIsNameModalOpen] = useState<boolean>(true)
     const [step1View, setStep1View] = useState<'name' | 'select'>('name')
     const [currentTab, setCurrentTab] = useState<'priority' | 'time'>('time')
-
+    const kakaoId = new URLSearchParams(window.location.search).get('botGroupKey') ?? null
     // 최초 진입 시(Step1) history에 현재 단계 넣어 두기 → 날짜 선택 후 뒤로가기 시 Step1으로 복귀
     useEffect(() => {
         if (!isNameModalOpen) return
@@ -225,7 +225,7 @@ export default function User({
         }
 
         try {
-            const participant = await addParticipant(voteId, name)
+            const participant = await addParticipant(voteId, name, kakaoId)
             if(!participant) return
             setSelectedParticipantId(participant.id)
             saveStoredParticipant({
