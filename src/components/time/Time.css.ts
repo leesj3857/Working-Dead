@@ -67,3 +67,15 @@ export const saveButtonIcon = style({
     height: '20px',
 })
 
+export const finalizedBanner = style({
+    width: '100%',
+    padding: '12px 16px',
+    marginBottom: '16px',
+    borderRadius: '10px',
+    backgroundColor: subtle2,
+    color: primaryWhite,
+    fontSize: '14px',
+    fontWeight: 500,
+    textAlign: 'center',
+})
+

@@ -17,9 +17,10 @@ import { primaryMain1, primarySub1, subtle1 } from '../../../../style/color.css'
 
 interface TargetDateProps {
     period: Period
+    dateLabel?: string
 }
 
-export default function TargetDate({ period }: TargetDateProps) {
+export default function TargetDate({ period, dateLabel }: TargetDateProps) {
     const isLunch = period === 'LUNCH'
 
     return (
@@ -27,7 +28,7 @@ export default function TargetDate({ period }: TargetDateProps) {
             <div className={targetDateRow}>
                 <div className={targetDateInfo}>
                     <Icon path={mdiLicense} size={1.4} color={subtle1} />
-                    <span className={targetDateTitle}>2026년 2월 3일 (화)</span>
+                    <span className={targetDateTitle}>{dateLabel ?? '일시 미정'}</span>
                 </div>
                 <div
                     className={`${badgeContainer} ${isLunch ? badgeLunch : badgeDinner}`}

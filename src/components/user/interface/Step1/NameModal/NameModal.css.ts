@@ -135,3 +135,15 @@ export const saveButtonIcon = style({
   height: '20px',
 })
 
+export const selectExistingLink = style({
+  marginTop: '16px',
+  fontSize: '14px',
+  color: primaryMain1,
+  opacity: 0.9,
+  cursor: 'pointer',
+  textDecoration: 'underline',
+  background: 'none',
+  border: 'none',
+  padding: 0,
+})
+

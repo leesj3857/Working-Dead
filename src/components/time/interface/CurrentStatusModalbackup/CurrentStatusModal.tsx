@@ -1,8 +1,8 @@
-import {
-    modalOverlay,
-    modalContainer,
-    modalHeader,
-    modalTitle,
+import { 
+    modalOverlay, 
+    modalContainer, 
+    modalHeader, 
+    modalTitle, 
     closeButton,
     modalContent,
     voteItem,
@@ -18,80 +18,70 @@ import {
     participantChip,
     participantChipText,
     participantsContainer,
-    voteItemContent,
+    voteItemContent
 } from './CurrentStatusModal.css'
 import Icon from '@mdi/react'
-import {
-    mdiClose,
-    mdiAccountMultipleOutline,
-    mdiChevronDown,
-    mdiMinusBoxOutline,
-    mdiPlusBoxOutline,
-    mdiStarOutline,
-    mdiCheckCircleOutline,
-} from '@mdi/js'
+import { mdiClose, mdiAccountMultipleOutline, mdiChevronDown, mdiMinusBoxOutline, mdiPlusBoxOutline, mdiStarOutline } from '@mdi/js'
 import { subtle1, accent, subtle2 } from '../../../../style/color.css'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
+import type { Period } from '../../../../api/type'
 import { useQuery } from '@tanstack/react-query'
-import { getTimePollStatus } from '../../../../api/timePoll'
-
+import { getVoteResult } from '../../../../api/vote'
 interface Participant {
     id: string
     name: string
     star: boolean
 }
 
-interface TimeGroup {
+interface Vote {
     id: string
-    time: string
+    date: string
+    dayOfWeek: string
+    period: Period
     participants: Participant[]
 }
 
 interface CurrentStatusModalProps {
     isOpen: boolean
     onClose: () => void
-    pollId: number
+    voteId: number
 }
 
-export default function CurrentStatusModal({ isOpen, onClose, pollId }: CurrentStatusModalProps) {
+export default function CurrentStatusModal({ isOpen, onClose, voteId }: CurrentStatusModalProps) {
     const [expandedVotes, setExpandedVotes] = useState<Set<string>>(new Set())
     
-    // 시간 투표 현황 조회 (모달이 열릴 때마다 최신 데이터)
-    const { data: timePollStatus } = useQuery({
-        queryKey: ['time-poll-status', pollId],
-        queryFn: () => getTimePollStatus(pollId),
-        refetchOnWindowFocus: false,
-        enabled: isOpen && !!pollId,
+    // 투표 결과 조회 (모달이 열릴 때마다 최신 데이터)
+    const { data: voteResult } = useQuery({
+        queryKey: ['vote-result', voteId],
+        queryFn: () => getVoteResult(voteId),
+        enabled: isOpen && !!voteId,
     })
-
-    // entries를 선택 시간별로 그룹화해서 기존 리스트 UI에 맞게 변환
-    const votes: TimeGroup[] = useMemo(() => {
-        if (!timePollStatus) return []
-
-        const map = new Map<string, Participant[]>()
-
-        timePollStatus.entries.forEach(entry => {
-            const list = map.get(entry.selectedTime) ?? []
-            list.push({
-                id: entry.displayName,
-                name: entry.displayName,
-                star: false,
-            })
-            map.set(entry.selectedTime, list)
+    
+    // 투표 결과를 CurrentStatusModal 형식으로 변환
+    const votes = voteResult?.rankings.map(rank => {
+        // 날짜를 요일로 변환
+        const dateObj = new Date(rank.date)
+        const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][dateObj.getDay()]
+        
+        // 참가자 정보 변환: priority가 있으면 star: true
+        const participants = rank.voters.map(voter => {
+            const hasPriority = voter.priorityIndex > 0
+            return {
+                id: String(voter.participantId),
+                name: voter.participantName,
+                star: hasPriority
+            }
         })
-
-        // Sort the groups by participant count, descending
-        const sortedEntries = Array.from(map.entries()).sort(
-            (a, b) => b[1].length - a[1].length
-        )
-
-        return sortedEntries.map(([time, participants], index) => ({
-            id: `${index + 1}`,
-            time,
-            participants,
-        }))
-    }, [timePollStatus])
+        
+        return {
+            id: `${rank.rank}`,
+            date: rank.date,
+            dayOfWeek,
+            period: rank.period as Period,
+            participants
+        }
+    }) || []
     const [showAll, setShowAll] = useState(false)
     
     const displayedVotes = showAll ? votes : votes.slice(0, 3)
@@ -180,9 +170,9 @@ export default function CurrentStatusModal({ isOpen, onClose, pollId }: CurrentS
                                                 <div className={voteIndex}>{index + 1}</div>
                                                 <div className={voteInfo}>
                                                     <div className={voteDate}>
-                                                        {vote.time}
+                                                        {vote.date} ({vote.dayOfWeek})
                                                     </div>
-                                                    <div className={voteMealType}>선택 시간</div>
+                                                    <div className={voteMealType}>{vote.period === 'LUNCH' ? '점심' : '저녁'}</div>
                                                 </div>
                                                 <div className={voteStats}>
                                                     <Icon 
@@ -257,30 +247,7 @@ export default function CurrentStatusModal({ isOpen, onClose, pollId }: CurrentS
                                     </motion.div>
                                 )
                             })}
-
-                            {/* {timePollStatus && (
-                                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <span style={{ fontWeight: 600, color: accent }}>
-                                            {timePollStatus.status === 'FINALIZED' ? '최종 시간 확정 완료' : '투표 진행 중'}
-                                        </span>
-                                    </div>
-                                    <div style={{ fontSize: 12, color: subtle1 }}>
-                                        총 {timePollStatus.totalParticipants}명 중 {timePollStatus.submittedCount}명 응답
-                                    </div>
-                                    {timePollStatus.status === 'FINALIZED' && timePollStatus.finalizedTime && (
-                                        <div style={{ fontSize: 12, color: subtle1 }}>
-                                            확정 시간: <strong>{timePollStatus.finalizedTime}</strong>
-                                        </div>
-                                    )}
-                                    {timePollStatus.pendingNames.length > 0 && (
-                                        <div style={{ fontSize: 12, color: subtle1 }}>
-                                            아직 응답하지 않은 사람: {timePollStatus.pendingNames.join(', ')}
-                                        </div>
-                                    )}
-                                </div>
-                            )} */}
-
+                            
                             {votes.length > 3 && (
                                 <div className={moreButtonContainer}>
                                     <button className={moreButton} onClick={() => setShowAll(!showAll)}>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Icon from '@mdi/react'
 import { mdiWeatherSunny, mdiWeatherNight, mdiPlus } from '@mdi/js'
 import type { Period } from '../../../../api/type'
@@ -22,9 +22,10 @@ interface DateCalendarProps {
     period: Period
     selectedTime: string | null
     onSelectTime: (time: string) => void
+    disabled?: boolean
 }
 
-const BASE_TIMES = [
+const BASE_TIMES_LUNCH = [
     '11:00',
     '11:30',
     '12:00',
@@ -37,20 +38,58 @@ const BASE_TIMES = [
     '15:30',
 ]
 
-export default function DateCalendar({ period, selectedTime, onSelectTime }: DateCalendarProps) {
+const BASE_TIMES_DINNER = [
+    '17:00',
+    '17:30',
+    '18:00',
+    '18:30',
+    '19:00',
+    '19:30',
+    '20:00',
+    '20:30',
+    '21:00'
+]
+
+function normalizeTimeHHMM(value: string): string | null {
+    const parts = value.split(':')
+    if (parts.length >= 2) {
+        return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`
+    }
+    return value.match(/^\d{1,2}:\d{2}$/) ? value : null
+}
+
+export default function DateCalendar({ period, selectedTime, onSelectTime, disabled = false }: DateCalendarProps) {
     const [extraTimes, setExtraTimes] = useState<string[]>([])
 
     const isLunch = period === 'LUNCH'
     const headerColor = isLunch ? primaryMain1 : primarySub1
 
+    // 선택했던 시간(또는 서버에서 내려온 시간)이 기본 목록에 없으면 extraTimes에 넣어서 계속 유지
+    useEffect(() => {
+        if (!selectedTime) return
+        const normalized = normalizeTimeHHMM(selectedTime)
+        const base = isLunch ? BASE_TIMES_LUNCH : BASE_TIMES_DINNER
+        if (!normalized || base.includes(normalized) || extraTimes.includes(normalized)) return
+        setExtraTimes(prev => [...prev, normalized])
+    }, [selectedTime, isLunch, extraTimes])
+
     const times = useMemo(() => {
-        const all = [...BASE_TIMES, ...extraTimes]
+        const base = isLunch ? BASE_TIMES_LUNCH : BASE_TIMES_DINNER
+        let all = [...base, ...extraTimes]
+
+        if (selectedTime) {
+            const normalized = normalizeTimeHHMM(selectedTime)
+            if (normalized && !all.includes(normalized)) {
+                all = [...all, normalized]
+            }
+        }
+
         const toMinutes = (t: string) => {
             const [h, m] = t.split(':').map(Number)
             return h * 60 + m
         }
         return all.sort((a, b) => toMinutes(a) - toMinutes(b))
-    }, [extraTimes])
+    }, [extraTimes, isLunch, selectedTime])
 
     const parseAndNormalizeTime = (input: string): string | null => {
         const trimmed = input.trim()
@@ -84,6 +123,7 @@ export default function DateCalendar({ period, selectedTime, onSelectTime }: Dat
     }
 
     const handlePlusClick = () => {
+        if (disabled) return
         const value = window.prompt('추가할 시간을 입력하세요 (HH:MM 또는 HHMM)')
         if (!value) return
 
@@ -126,7 +166,7 @@ export default function DateCalendar({ period, selectedTime, onSelectTime }: Dat
                     {isLunch ? '점심' : '저녁'}
                 </span>
             </div>
-            <div className={calendarBox}>
+            <div className={calendarBox} style={{ opacity: disabled ? 0.7 : 1, pointerEvents: disabled ? 'none' : undefined }}>
                 <div className={timeGrid}>
                     {times.map(time => {
                         const isSelected = selectedTime === time
@@ -135,7 +175,8 @@ export default function DateCalendar({ period, selectedTime, onSelectTime }: Dat
                                 key={time}
                                 type="button"
                                 className={`${timeButton} ${isSelected ? isLunch ? timeButtonSelectedLunch : timeButtonSelectedDinner : ''}`}
-                                onClick={() => onSelectTime(time)}
+                                onClick={() => !disabled && onSelectTime(time)}
+                                disabled={disabled}
                             >
                                 <span
                                     className={`${timeButtonText} ${
@@ -152,6 +193,7 @@ export default function DateCalendar({ period, selectedTime, onSelectTime }: Dat
                         className={plusButton}
                         style={{ gridColumn: getPlusGridColumn() }}
                         onClick={handlePlusClick}
+                        disabled={disabled}
                     >
                         <Icon path={mdiPlus} size={1} color={accent} />
                     </button>

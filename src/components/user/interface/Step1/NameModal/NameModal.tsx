@@ -9,15 +9,17 @@ import {
   saveButton,
   saveButtonDisabled,
   saveButtonIcon,
+  selectExistingLink,
 } from './NameModal.css'
 
 interface NameModalProps {
   isOpen: boolean
   initialName?: string
   onSave: (name: string) => void
+  onSelectExistingUser?: () => void
 }
 
-export default function NameModal({ isOpen, initialName, onSave }: NameModalProps) {
+export default function NameModal({ isOpen, initialName, onSave, onSelectExistingUser }: NameModalProps) {
   const [name, setName] = useState(initialName ?? '')
 
   useEffect(() => {
@@ -66,6 +68,15 @@ export default function NameModal({ isOpen, initialName, onSave }: NameModalProp
           <img src="/TickSquare.png" alt="저장" className={saveButtonIcon} />
           <span>저장하기</span>
         </button>
+        {onSelectExistingUser && (
+          <button
+            type="button"
+            className={selectExistingLink}
+            onClick={onSelectExistingUser}
+          >
+            이미 이름을 입력하셨나요?
+          </button>
+        )}
       </div>
     </div>
   )

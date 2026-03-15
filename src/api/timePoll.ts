@@ -1,11 +1,13 @@
 import type { AxiosResponse } from "axios";
 import { apiClient } from "./client";
+import type { Period } from "./type";
 
-export type TimePollStatus = "ONGOING" | "CONFIRMED" | "CANCELLED";
+export type TimePollStatus = "ONGOING" | "FINALIZED";
 
 export interface TimePollDetailResponse {
   id: number;
   confirmedDate: string | null;
+  period: Period;
   status: TimePollStatus;
   finalizedTime: string | null;
   totalParticipants: number;
@@ -35,6 +37,16 @@ export interface SubmitTimePollRequest {
   participantId: number;
   selectedTime: string;
 }
+
+
+export const getVoteIdbyTimePollId = async (
+  timePollId: number
+) => {
+  const response = await apiClient.get(
+    `/time-polls/${timePollId}/vote`
+  );
+  return response.data.voteId;
+};
 
 /**
  * GET /time-polls/{pollId}
