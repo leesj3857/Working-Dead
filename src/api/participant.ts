@@ -5,7 +5,7 @@ import type { Participant, Schedule, Priority } from "./type";
 export interface ScheduleRequest {
   schedules: Schedule[],
   priorities: Priority[],
-  botUserKey: string | null,
+  kakaoId: string | null,
 }
 export interface Selection {
   date: string,

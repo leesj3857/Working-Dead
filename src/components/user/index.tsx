@@ -205,7 +205,7 @@ export default function User({
             await updateSchedule(selectedParticipantId, {
                 schedules,
                 priorities,
-                botUserKey
+                kakaoId: botUserKey
             })
             
             // 원본 데이터 업데이트
