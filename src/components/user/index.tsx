@@ -200,7 +200,7 @@ export default function User({
                     }
                 })
             
-            const botUserKey = new URLSearchParams(window.location.search).get('botGroupKey') ?? null
+            const botUserKey = new URLSearchParams(window.location.search).get('botUserKey') ?? null
 
             await updateSchedule(selectedParticipantId, {
                 schedules,
