@@ -200,9 +200,12 @@ export default function User({
                     }
                 })
             
+            const botUserKey = new URLSearchParams(window.location.search).get('botGroupKey') ?? null
+
             await updateSchedule(selectedParticipantId, {
                 schedules,
-                priorities
+                priorities,
+                botUserKey
             })
             
             // 원본 데이터 업데이트

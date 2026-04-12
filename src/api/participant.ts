@@ -5,6 +5,7 @@ import type { Participant, Schedule, Priority } from "./type";
 export interface ScheduleRequest {
   schedules: Schedule[],
   priorities: Priority[],
+  botUserKey: string | null,
 }
 export interface Selection {
   date: string,
