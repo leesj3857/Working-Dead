@@ -228,7 +228,7 @@ export default function User({
         }
 
         try {
-            const participant = await addParticipant(voteId, name, kakaoId)
+            const participant = await addParticipant(voteId, name)
             if(!participant) return
             setSelectedParticipantId(participant.id)
             saveStoredParticipant({
