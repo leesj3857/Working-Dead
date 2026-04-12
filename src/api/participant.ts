@@ -39,11 +39,10 @@ export const getParticipants = async (
 export const addParticipant = async (
   voteId: number,
   displayName: string,
-  kakaoId: string | null
 ): Promise<Participant> => {
   const response: AxiosResponse<Participant> = await apiClient.post(
     `/votes/${voteId}/participants`,
-    { displayName, kakaoId }
+    { displayName }
   );
   return response.data;
 };
