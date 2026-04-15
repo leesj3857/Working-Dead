@@ -5,7 +5,6 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import {QueryClient} from '@tanstack/react-query'
 import App from './App'
 import User from './pages/User'
-import Admin from './pages/Admin'
 import Time from './pages/Time'
 import './index.css'
 const queryClient = new QueryClient()
@@ -16,7 +15,6 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <User /> },
-      { path: 'admin', element: <Admin /> },
       { path: 'v/:code', element: <User /> },
       { path: 'time/:pollId', element: <Time /> },
     ],
