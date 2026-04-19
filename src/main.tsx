@@ -7,6 +7,7 @@ import App from './App'
 import User from './pages/User'
 import Admin from './pages/Admin'
 import Time from './pages/Time'
+import Desktop from './pages/Desktop'
 import './index.css'
 const queryClient = new QueryClient()
 
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: 'admin', element: <Admin /> },
       { path: 'v/:code', element: <User /> },
       { path: 'time/:pollId', element: <Time /> },
+      { path: 'desktop', element: <Desktop /> },
     ],
   },
 ])

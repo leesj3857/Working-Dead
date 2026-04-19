@@ -1,17 +1,29 @@
-import { Outlet, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Header from './components/header/Header'
 import { appContainer } from './App.css'
-import { background, subtle3 } from './style/color.css'
+import { background } from './style/color.css'
 import { DisplayNameProvider } from './context/DisplayNameContext'
+import { isMobileDevice } from './utils/device'
 
 function App() {
   const location = useLocation()
-  const isAdmin = location.pathname === '/admin'
-  
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (location.pathname === '/desktop') return
+    if (!isMobileDevice()) {
+      navigate('/desktop', {
+        replace: true,
+        state: { from: location.pathname + location.search },
+      })
+    }
+  }, [location.pathname, location.search, navigate])
+
   return (
     <DisplayNameProvider>
-      <div 
-        className={appContainer} 
+      <div
+        className={appContainer}
         style={{ backgroundColor: background }}
       >
         <Header />
