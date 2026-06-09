@@ -1,10 +1,10 @@
-import { setOrderContainer, setOrderCollapsed, setOrderExpanded, orderTitle, 
+import { setOrderContainer, setOrderCollapsed, setOrderExpanded, orderTitle,
     orderDescription, orderTitleContainer, priorityList, priorityItem,
-    priorityNumber, prioritySlot, divider, datesList, dateChip, 
-    dateChipSelected, dateText, orderHighlight } from './SetOrder.css'
+    priorityNumber, prioritySlot, divider, datesList, dateChip,
+    dateChipSelected, dateText, orderHighlight, orderStar } from './SetOrder.css'
 import Icon from '@mdi/react'
 import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
-import { subtle1, primarySub1 } from '../../../../../style/color.css'
+import { subtle1 } from '../../../../../style/color.css'
 import type { Period } from '../../../../../api/type'
 
 interface MealSelection {
@@ -68,7 +68,8 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
     return (
         <div className={containerClass}>
             <div className={orderTitleContainer}>
-                <span className={orderTitle}>우선순위 설정<span style={{ color: primarySub1 }}>*</span></span>
+                <span className={orderTitle}>우선순위 설정</span>
+                <span className={orderStar}>*</span>
                 <span className={orderHighlight}>(선택)</span>
             </div>
 

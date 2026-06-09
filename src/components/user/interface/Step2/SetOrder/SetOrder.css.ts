@@ -48,8 +48,20 @@ export const orderDescription = style([
 
 export const orderTitleContainer = style({
     display: 'flex',
-    alignItems: 'end',
+    alignItems: 'baseline',
+    gap: '4px',
 })
+
+export const orderStar = style([
+    labelMedium,
+    {
+        fontSize: "20px",
+        color: primarySub1,
+        alignSelf: 'flex-end',
+        transform: 'translateY(-6px)',
+        marginBottom: '5px',
+    }
+])
 
 export const priorityList = style({
     display: 'flex',

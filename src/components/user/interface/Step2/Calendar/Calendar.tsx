@@ -1,12 +1,15 @@
-import { useMemo, useRef } from 'react'
-import { 
-    calendarContainer, 
-    weekdayHeader, 
-    weekdayLabel, 
-    datesGrid, 
+import { useMemo } from 'react'
+import {
+    calendarContainer,
+    weekdayHeader,
+    weekdayLabel,
+    datesGrid,
     dateColumn,
     emptyBox,
     dateLabel,
+    dateMonth,
+    dateSlash,
+    dateDay,
     mealSlot,
     mealSlotLunch,
     mealSlotDinner,
@@ -31,17 +34,8 @@ interface CalendarProps {
 }
 
 export default function Calendar({ startDate, endDate, selectedDates, setSelectedDates,setOrderList }: CalendarProps) {
-    const weekdayHeaderRef = useRef<HTMLDivElement>(null)
-    const dateContainerRef = useRef<HTMLDivElement>(null)
-    
     const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-    
-    const handleScroll = () => {
-        if (weekdayHeaderRef.current && dateContainerRef.current) {
-            weekdayHeaderRef.current.scrollLeft = dateContainerRef.current.scrollLeft
-        }
-    }
-    
+
     // 날짜 범위를 기반으로 dates 배열 생성
     const dates = useMemo(() => {
         const result: { date: string, day: string, dateObj: Date | null, isEmpty: boolean }[] = []
@@ -79,10 +73,6 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
         
         return result
     }, [startDate, endDate])
-    
-    // 실제 필요한 열 개수 계산 (dates 배열 길이를 7로 나눈 올림값 * 7)
-    const actualColumns = dates.length
-    const gridColumns = Math.min(7, actualColumns) // 최대 7열
     
     const toggleDate = (date: string) => {
         setSelectedDates(prev => {
@@ -138,19 +128,15 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
     return (
         <div className={calendarContainer}>
             {/* 요일 헤더 */}
-            <div 
-                className={weekdayHeader} 
-                ref={weekdayHeaderRef}
-                style={{ gridTemplateColumns: `repeat(${gridColumns}, 70px)` }}
-            >
-                {weekdays.slice(0, gridColumns).map((day, index) => (
+            <div className={weekdayHeader}>
+                {weekdays.map((day, index) => (
                     <div key={index} className={weekdayLabel}>
                         {day}
                     </div>
                 ))}
             </div>
-            <div className={dateContainer} ref={dateContainerRef} onScroll={handleScroll}>
-                <div className={datesGrid} style={{ gridTemplateColumns: `repeat(${gridColumns}, 70px)` }}>
+            <div className={dateContainer}>
+                <div className={datesGrid}>
                     {dates.map((dateInfo, index) => {
                         // 빈 칸인 경우
                         if (dateInfo.isEmpty) {
@@ -160,40 +146,45 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
                                 </div>
                             )
                         }
-                        
+
                         const lunchSelected = isMealSelected(dateInfo.date, 'LUNCH')
                         const dinnerSelected = isMealSelected(dateInfo.date, 'DINNER')
-                        
+                        const [m, d] = dateInfo.date.split('/')
+                        const monthLabel = m.padStart(2, '0')
+                        const dayLabel = d.padStart(2, '0')
+
                         return (
                             <div key={dateInfo.date} className={dateColumn}>
                                 {/* 날짜 */}
                                 <div className={dateLabel} onClick={() => toggleDate(dateInfo.date)} style={{ cursor: 'pointer' }}>
-                                    {dateInfo.date}
+                                    <span className={dateMonth}>{monthLabel}</span>
+                                    <span className={dateSlash} />
+                                    <span className={dateDay}>{dayLabel}</span>
                                 </div>
-                                
+
                                 {/* 점심 */}
-                                <div 
+                                <div
                                     className={`${mealSlot} ${mealSlotLunch} ${lunchSelected ? mealSlotSelected : ''}`}
                                     onClick={() => toggleMeal(dateInfo.date, 'LUNCH')}
-                                    style={lunchSelected ? {} : {}}
                                 >
-                                    <Icon 
-                                        path={mdiWeatherSunny} 
-                                        size={0.7} 
+                                    <Icon
+                                        path={mdiWeatherSunny}
+                                        size={1}
+                                        style={{ width: 24, height: 24 }}
                                         color={lunchSelected ? '#FFFFFF' : accent}
                                     />
                                     <span style={{ color: lunchSelected ? '#FFFFFF' : accent }}>점심</span>
                                 </div>
-                                
+
                                 {/* 저녁 */}
-                                <div 
+                                <div
                                     className={`${mealSlot} ${mealSlotDinner} ${dinnerSelected ? mealSlotSelected : ''}`}
                                     onClick={() => toggleMeal(dateInfo.date, 'DINNER')}
-                                    style={dinnerSelected ? {} : {}}
                                 >
-                                    <Icon 
-                                        path={mdiWeatherNight} 
-                                        size={0.7} 
+                                    <Icon
+                                        path={mdiWeatherNight}
+                                        size={1}
+                                        style={{ width: 24, height: 24 }}
                                         color={dinnerSelected ? '#FFFFFF' : accent}
                                     />
                                     <span style={{ color: dinnerSelected ? '#FFFFFF' : accent }}>저녁</span>
@@ -203,7 +194,6 @@ export default function Calendar({ startDate, endDate, selectedDates, setSelecte
                     })}
                 </div>
             </div>
-            {/* 날짜 그리드 */}
         </div>
     )
 }

@@ -1,17 +1,18 @@
 import { style } from '@vanilla-extract/css'
-import { subtle2, subtle1, accent } from '../../../../../style/color.css'
+import { subtle2, subtle1, subtle3, accent } from '../../../../../style/color.css'
 import { labelSmall, bodySmall } from '../../../../../style/typography.css'
 
 export const calendarContainer = style({
     width: '100%',
     borderTop: `1px solid ${subtle2}`,
     padding: '10px 17px',
+    boxSizing: 'border-box',
 })
 
 export const dateContainer = style({
     maxHeight: '50dvh',
     overflowY: 'auto',
-    overflowX: 'auto',
+    overflowX: 'hidden',
     position: 'relative',
     width: '100%',
     paddingBottom: '10px',
@@ -19,11 +20,10 @@ export const dateContainer = style({
 
 export const weekdayHeader = style({
     display: 'grid',
-    gridTemplateColumns: 'repeat(7, 70px)',
+    gridTemplateColumns: 'repeat(7, 1fr)',
     gap: '2px',
     marginBottom: '10px',
-    overflowX: 'hidden',
-    overflowY: 'hidden',
+    width: '100%',
 })
 
 export const weekdayLabel = style([
@@ -31,43 +31,68 @@ export const weekdayLabel = style([
     {
         color: subtle1,
         textAlign: 'center',
-        width: '70px',
     }
 ])
 
 export const datesGrid = style({
     display: 'grid',
-    gridTemplateColumns: 'repeat(7, 70px)',
+    gridTemplateColumns: 'repeat(7, 1fr)',
     gap: '2px',
-    minWidth: 'fit-content',
+    width: '100%',
 })
 
 export const dateColumn = style({
     display: 'flex',
     flexDirection: 'column',
     gap: '2px',
-    width: '70px',
+    minWidth: 0,
 })
 
 export const emptyBox = style({
     border: `1px solid ${subtle2}`,
     borderRadius: '7px',
-    width: '70px',
-    height: '180px', // 36 + 70 + 70 = 176px (날짜 + 점심 + 저녁)
+    width: '100%',
+    height: '160px', // 36 + 2 + 60 + 2 + 60
 })
 
-export const dateLabel = style([
+export const dateLabel = style({
+    position: 'relative',
+    borderRadius: '7px',
+    backgroundColor: subtle1,
+    color: '#FFFFFF',
+    height: '36px',
+    width: '100%',
+})
+
+export const dateMonth = style([
     bodySmall,
     {
-        borderRadius: '7px',
-        backgroundColor: subtle1,
+        position: 'absolute',
+        top: '3px',
+        left: '6px',
         color: '#FFFFFF',
-        textAlign: 'center',
-        height: '36px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '70px',
+        lineHeight: 1,
+    }
+])
+
+export const dateSlash = style({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%) rotate(135deg)',
+    width: '20px',
+    height: 0,
+    borderTop: '0.5px solid #FFFFFF',
+})
+
+export const dateDay = style([
+    bodySmall,
+    {
+        position: 'absolute',
+        bottom: '3px',
+        right: '6px',
+        color: '#FFFFFF',
+        lineHeight: 1,
     }
 ])
 
@@ -75,21 +100,19 @@ export const mealSlot = style([
     bodySmall,
     {
         border: `1px solid ${subtle2}`,
+        backgroundColor: subtle3,
         borderRadius: '7px',
         color: accent,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '8px 4px',
         cursor: 'pointer',
         transition: 'all 0.2s ease',
-        width: '70px',
-        height: '70px',
+        width: '100%',
+        height: '60px',
         gap: '7px',
-        ':hover': {
-            // Will be overridden by inline style
-        }
+        boxSizing: 'border-box',
     }
 ])
 
