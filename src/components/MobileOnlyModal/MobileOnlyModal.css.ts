@@ -91,6 +91,7 @@ export const description = style([
     marginTop: '20px',
     textAlign: 'left',
     whiteSpace: 'pre-line',
+    wordBreak: 'keep-all',
   },
 ])
 

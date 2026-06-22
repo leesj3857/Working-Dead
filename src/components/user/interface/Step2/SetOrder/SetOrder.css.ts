@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css'
-import { titleLarge, labelMedium, labelLarge, bodySmall, titleMedium } from '../../../../../style/typography.css'
+import { labelMedium, labelLarge, bodySmall, titleMedium } from '../../../../../style/typography.css'
 import { accent, subtle1, subtle2, subtle3, primarySub1, background } from '../../../../../style/color.css'
 
 export const setOrderContainer = style({
@@ -19,7 +19,7 @@ export const setOrderCollapsed = style({
     borderTop: 'none',
     padding: '16px 20px 4px',
     boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.12)',
-    top: 'calc(100% - 49px)',
+    top: 'calc(100% - 65px)',
 })
 
 export const setOrderExpanded = style({
@@ -29,6 +29,16 @@ export const setOrderExpanded = style({
     padding: '16px 20px 24px',
     boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.08)',
     top: '160px',
+})
+
+export const sheetHandle = style({
+    width: '40px',
+    height: '4px',
+    borderRadius: '2px',
+    backgroundColor: subtle2,
+    alignSelf: 'center',
+    marginBottom: '12px',
+    flexShrink: 0,
 })
 
 export const orderTitle = style([

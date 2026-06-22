@@ -22,11 +22,11 @@ export const currentStatusButton = style({
 })
 
 export const currentStatusButtonTime = style({
-    bottom: '60px',
+    bottom: '76px',
 })
 
 export const currentStatusButtonPriority = style({
-    bottom: '10px',
+    bottom: '26px',
 })
 
 export const currentStatusIcon = style({

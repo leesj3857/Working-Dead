@@ -1,7 +1,7 @@
 import { setOrderContainer, setOrderCollapsed, setOrderExpanded, orderTitle,
     orderDescription, orderTitleContainer, priorityList, priorityItem,
     priorityNumber, prioritySlot, divider, datesList, dateChip,
-    dateChipSelected, dateText, orderHighlight, orderStar } from './SetOrder.css'
+    dateChipSelected, dateText, orderHighlight, orderStar, sheetHandle } from './SetOrder.css'
 import Icon from '@mdi/react'
 import { mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
 import { subtle1 } from '../../../../../style/color.css'
@@ -67,6 +67,7 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
 
     return (
         <div className={containerClass}>
+            <div className={sheetHandle} />
             <div className={orderTitleContainer}>
                 <span className={orderTitle}>우선순위 설정</span>
                 <span className={orderStar}>*</span>

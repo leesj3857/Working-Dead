@@ -6,7 +6,7 @@ import { primaryMain1, primarySub1, primarySub3, primaryMain3 } from '../../../.
 export const descriptionContainer = style({
     display: 'flex',
     flexDirection: 'column',
-    gap: '10px',
+    gap: '16px',
     marginBottom: '20px',
 })
 
@@ -21,7 +21,7 @@ export const descriptionTabDateButton = style([
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '0px 10px',
+        padding: '6px 10px',
         gap: '3px',
         borderRadius: '7px',
         backgroundColor: primaryMain1,
@@ -40,7 +40,7 @@ export const descriptionTabPriorityButton = style([
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '0px 10px',
+        padding: '6px 10px',
         gap: '3px',
         borderRadius: '7px',
         backgroundColor: primarySub1,
@@ -57,6 +57,9 @@ export const descriptionTitle = style([
     headlineMedium,
     {
         color: accent,
+        fontSize: '32px',
+        lineHeight: '40px',
+        fontWeight: 400,
     }
 ])
 

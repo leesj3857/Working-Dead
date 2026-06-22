@@ -5,7 +5,7 @@ import { labelSmall, bodySmall } from '../../../../../style/typography.css'
 export const calendarContainer = style({
     width: '100%',
     borderTop: `1px solid ${subtle2}`,
-    padding: '10px 17px',
+    padding: '10px 0px',
     boxSizing: 'border-box',
 })
 
@@ -20,7 +20,8 @@ export const dateContainer = style({
 
 export const weekdayHeader = style({
     display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
+    gridTemplateColumns: 'repeat(7, minmax(0, 50px))',
+    justifyContent: 'center',
     gap: '2px',
     marginBottom: '10px',
     width: '100%',
@@ -36,7 +37,8 @@ export const weekdayLabel = style([
 
 export const datesGrid = style({
     display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
+    gridTemplateColumns: 'repeat(7, minmax(0, 50px))',
+    justifyContent: 'center',
     gap: '2px',
     width: '100%',
 })
