@@ -1,24 +1,20 @@
-import { fontFace, style } from '@vanilla-extract/css';
+import { fontFace, globalStyle, style } from '@vanilla-extract/css';
+import PretendardVariable from './PretendardVariable.woff2';
 
-// Work Sans 폰트 정의 - 각각 따로 정의
-export const workSansRegular = fontFace({
-  src: 'url(/WorkSans-Regular.ttf)',
+export const pretendard = fontFace({
+  src: `url(${PretendardVariable}) format('woff2-variations')`,
+  fontWeight: '45 920',
   fontStyle: 'normal',
+  fontDisplay: 'swap',
 });
 
-export const workSansMedium = fontFace({
-  src: 'url(/WorkSans-Medium.ttf)',
-  fontStyle: 'normal',
-});
-
-export const workSansSemiBold = fontFace({
-  src: 'url(/WorkSans-SemiBold.ttf)',
-  fontStyle: 'normal',
+globalStyle('body', {
+  fontFamily: pretendard,
 });
 
 // Display 스타일
 export const displayLarge = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '64px',
   lineHeight: '72px',
   letterSpacing: '0px',
@@ -26,7 +22,7 @@ export const displayLarge = style({
 });
 
 export const displayMedium = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '48px',
   lineHeight: '56px',
   letterSpacing: '0px',
@@ -34,7 +30,7 @@ export const displayMedium = style({
 });
 
 export const displaySmall = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '40px',
   lineHeight: '48px',
   letterSpacing: '0px',
@@ -43,7 +39,7 @@ export const displaySmall = style({
 
 // Headline 스타일
 export const headlineLarge = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '32px',
   lineHeight: '40px',
   letterSpacing: '0px',
@@ -51,7 +47,7 @@ export const headlineLarge = style({
 });
 
 export const headlineMedium = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '28px',
   lineHeight: '36px',
   letterSpacing: '0px',
@@ -59,7 +55,7 @@ export const headlineMedium = style({
 });
 
 export const headlineSmall = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '24px',
   lineHeight: '32px',
   letterSpacing: '0px',
@@ -68,7 +64,7 @@ export const headlineSmall = style({
 
 // Title 스타일
 export const titleLarge = style({
-  fontFamily: workSansMedium,
+  fontFamily: pretendard,
   fontSize: '22px',
   lineHeight: '28px',
   letterSpacing: '+0.4px',
@@ -76,7 +72,7 @@ export const titleLarge = style({
 });
 
 export const titleMedium = style({
-  fontFamily: workSansMedium,
+  fontFamily: pretendard,
   fontSize: '16px',
   lineHeight: '24px',
   letterSpacing: '+0.16px',
@@ -84,7 +80,7 @@ export const titleMedium = style({
 });
 
 export const titleSmall = style({
-  fontFamily: workSansMedium,
+  fontFamily: pretendard,
   fontSize: '14px',
   lineHeight: '20px',
   letterSpacing: '+0.12px',
@@ -93,7 +89,7 @@ export const titleSmall = style({
 
 // Label 스타일
 export const labelLarge = style({
-  fontFamily: workSansMedium,
+  fontFamily: pretendard,
   fontSize: '16px',
   lineHeight: '24px',
   letterSpacing: '+0.2px',
@@ -101,7 +97,7 @@ export const labelLarge = style({
 });
 
 export const labelMedium = style({
-  fontFamily: workSansMedium,
+  fontFamily: pretendard,
   fontSize: '14px',
   lineHeight: '20px',
   letterSpacing: '+0.4px',
@@ -109,7 +105,7 @@ export const labelMedium = style({
 });
 
 export const labelSmall = style({
-  fontFamily: workSansMedium,
+  fontFamily: pretendard,
   fontSize: '12px',
   lineHeight: '16px',
   letterSpacing: '+0.6px',
@@ -118,7 +114,7 @@ export const labelSmall = style({
 
 // Body 스타일
 export const bodyLarge = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '16px',
   lineHeight: '24px',
   letterSpacing: '+0.16px',
@@ -126,7 +122,7 @@ export const bodyLarge = style({
 });
 
 export const bodyMedium = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '14px',
   lineHeight: '20px',
   letterSpacing: '+0.24px',
@@ -134,7 +130,7 @@ export const bodyMedium = style({
 });
 
 export const bodySmall = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '12px',
   lineHeight: '16px',
   letterSpacing: '+0.4px',
@@ -143,7 +139,7 @@ export const bodySmall = style({
 
 // Overline 스타일
 export const overline = style({
-  fontFamily: workSansSemiBold,
+  fontFamily: pretendard,
   fontSize: '10px',
   lineHeight: '16px',
   letterSpacing: '+1px',
@@ -152,7 +148,7 @@ export const overline = style({
 
 // Caption 스타일
 export const caption = style({
-  fontFamily: workSansRegular,
+  fontFamily: pretendard,
   fontSize: '11px',
   lineHeight: '16px',
   letterSpacing: '+0.5px',

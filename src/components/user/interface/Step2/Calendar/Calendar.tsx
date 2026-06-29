@@ -33,15 +33,26 @@ interface CalendarProps {
     setOrderList: React.Dispatch<React.SetStateAction<(MealSelection | null)[]>>
 }
 
+const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+
 export default function Calendar({ startDate, endDate, selectedDates, setSelectedDates,setOrderList }: CalendarProps) {
-    const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
     // 날짜 범위를 기반으로 dates 배열 생성
     const dates = useMemo(() => {
         const result: { date: string, day: string, dateObj: Date | null, isEmpty: boolean }[] = []
-        const current = new Date(startDate)
+        const afterStart = new Date(startDate)
+        afterStart.setHours(0, 0, 0, 0)
+        afterStart.setDate(afterStart.getDate() + 1)
+
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        // 시작점: 생성일 다음 날과 오늘 중 더 늦은 날짜
+        const current = afterStart > today ? afterStart : today
+
         const end = new Date(endDate)
-        
+        end.setHours(0, 0, 0, 0)
+
         // 시작 날짜의 요일 인덱스 (0 = 일요일)
         const startDayOfWeek = current.getDay()
         
