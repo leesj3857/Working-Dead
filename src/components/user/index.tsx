@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TopNav from './interface/TopNav/TopNav'
 import Description from './interface/Description/Description'
@@ -88,6 +88,22 @@ export default function User({
     const participantList = participants ?? vote?.participants ?? []
 
     const [currentStatusOpen, setCurrentStatusOpen] = useState(false)
+    const setOrderRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (currentTab !== 'priority') return
+        const handleClick = (e: MouseEvent) => {
+            const el = setOrderRef.current
+            if (!el) return
+            const rect = el.getBoundingClientRect()
+            if (e.clientY < rect.top) {
+                e.stopPropagation()
+                setCurrentTab('time')
+            }
+        }
+        document.addEventListener('click', handleClick, true)
+        return () => document.removeEventListener('click', handleClick, true)
+    }, [currentTab])
 
     // 작업용 복사본
     const [selectedDates, setSelectedDates] = useState<MealSelection[]>([])
@@ -354,6 +370,7 @@ export default function User({
                 </AnimatePresence>
 
                 <SetOrder
+                    containerRef={setOrderRef}
                     selectedDates={selectedDates}
                     orderList={orderList}
                     setOrderList={setOrderList}

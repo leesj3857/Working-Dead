@@ -17,9 +17,10 @@ interface SetOrderProps {
     orderList: (MealSelection | null)[]
     setOrderList: React.Dispatch<React.SetStateAction<(MealSelection | null)[]>>
     collapsed?: boolean
+    containerRef?: React.Ref<HTMLDivElement>
 }
 
-export default function SetOrder({ selectedDates, orderList, setOrderList, collapsed = false }: SetOrderProps) {
+export default function SetOrder({ selectedDates, orderList, setOrderList, collapsed = false, containerRef }: SetOrderProps) {
 
     const weekdayMap: { [key: number]: string } = {
         0: 'S', // Sunday
@@ -66,7 +67,7 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
     const containerClass = `${setOrderContainer} ${collapsed ? setOrderCollapsed : setOrderExpanded}`
 
     return (
-        <div className={containerClass}>
+        <div className={containerClass} ref={containerRef}>
             <div className={sheetHandle} />
             <div className={orderTitleContainer}>
                 <span className={orderTitle}>우선순위 설정</span>

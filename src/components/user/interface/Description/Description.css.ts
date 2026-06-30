@@ -59,7 +59,7 @@ export const descriptionTitle = style([
         color: accent,
         fontSize: '32px',
         lineHeight: '40px',
-        fontWeight: 400,
+        fontWeight: 600,
     }
 ])
 
