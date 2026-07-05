@@ -27,12 +27,31 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
     const touchStartY = useRef<number | null>(null)
     const didDrag = useRef(false)
     const settleTimer = useRef<number | null>(null)
+    const localRef = useRef<HTMLDivElement | null>(null)
     const [dragOffset, setDragOffset] = useState<number | null>(null)
     // 임계점 미달로 스냅백하는 동안에도 본문을 유지해서 몸통이 함께 내려가게
     const [settling, setSettling] = useState(false)
 
     // 이만큼 넘게 드래그한 채 놓으면 시트가 펼쳐지거나 닫힘
     const DRAG_THRESHOLD = 60
+
+    const setRefs = (el: HTMLDivElement | null) => {
+        localRef.current = el
+        if (typeof containerRef === 'function') containerRef(el)
+        else if (containerRef) (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+    }
+
+    // 시트 드래그 중에는 뒤쪽 페이지 스크롤이 같이 움직이지 않도록 차단
+    // (React의 touchmove는 passive라 preventDefault가 불가능해 네이티브 리스너 사용)
+    useEffect(() => {
+        const el = localRef.current
+        if (!el) return
+        const preventScroll = (e: TouchEvent) => {
+            if (touchStartY.current !== null && e.cancelable) e.preventDefault()
+        }
+        el.addEventListener('touchmove', preventScroll, { passive: false })
+        return () => el.removeEventListener('touchmove', preventScroll)
+    }, [])
 
     useEffect(() => () => {
         if (settleTimer.current !== null) window.clearTimeout(settleTimer.current)
@@ -128,7 +147,7 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
     return (
         <div
             className={containerClass}
-            ref={containerRef}
+            ref={setRefs}
             onClick={handleClick}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
