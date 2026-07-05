@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { setOrderContainer, setOrderCollapsed, setOrderExpanded, orderTitle,
     orderDescription, orderTitleContainer, priorityList, priorityItem,
     priorityNumber, prioritySlot, divider, datesList, dateChip,
@@ -20,36 +20,56 @@ interface SetOrderProps {
     collapsed?: boolean
     containerRef?: React.Ref<HTMLDivElement>
     onExpand?: () => void
+    onCollapse?: () => void
 }
 
-export default function SetOrder({ selectedDates, orderList, setOrderList, collapsed = false, containerRef, onExpand }: SetOrderProps) {
+export default function SetOrder({ selectedDates, orderList, setOrderList, collapsed = false, containerRef, onExpand, onCollapse }: SetOrderProps) {
     const touchStartY = useRef<number | null>(null)
     const didDrag = useRef(false)
+    const settleTimer = useRef<number | null>(null)
     const [dragOffset, setDragOffset] = useState<number | null>(null)
+    // 임계점 미달로 스냅백하는 동안에도 본문을 유지해서 몸통이 함께 내려가게
+    const [settling, setSettling] = useState(false)
 
-    // 위로 이만큼 넘게 드래그한 채 놓으면 시트가 펼쳐짐
-    const EXPAND_THRESHOLD = 60
+    // 이만큼 넘게 드래그한 채 놓으면 시트가 펼쳐지거나 닫힘
+    const DRAG_THRESHOLD = 60
+
+    useEffect(() => () => {
+        if (settleTimer.current !== null) window.clearTimeout(settleTimer.current)
+    }, [])
 
     const handleTouchStart = (e: React.TouchEvent) => {
-        if (!collapsed) return
+        // 펼친 상태에서 날짜 목록은 자체 스크롤이 있어 드래그 시작 지점에서 제외
+        if (!collapsed && (e.target as HTMLElement).closest('[data-no-drag]')) return
         touchStartY.current = e.touches[0].clientY
         didDrag.current = false
+        if (settleTimer.current !== null) {
+            window.clearTimeout(settleTimer.current)
+            settleTimer.current = null
+        }
+        setSettling(false)
     }
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        if (!collapsed || touchStartY.current === null) return
+        if (touchStartY.current === null) return
         const delta = e.touches[0].clientY - touchStartY.current
         if (Math.abs(delta) > 5) didDrag.current = true
-        // 아래로는 원위치까지만, 위로는 자유롭게 따라오도록
-        setDragOffset(Math.min(delta, 0))
+        // 접힌 상태에선 위로만, 펼친 상태에선 아래로만 따라오도록
+        setDragOffset(collapsed ? Math.min(delta, 0) : Math.max(delta, 0))
     }
 
     const handleTouchEnd = () => {
         const offset = dragOffset
         touchStartY.current = null
         setDragOffset(null)
-        if (collapsed && offset !== null && offset < -EXPAND_THRESHOLD) {
+        if (offset === null) return
+        if (collapsed && offset < -DRAG_THRESHOLD) {
             onExpand?.()
+        } else if (!collapsed && offset > DRAG_THRESHOLD) {
+            onCollapse?.()
+        } else if (collapsed) {
+            setSettling(true)
+            settleTimer.current = window.setTimeout(() => setSettling(false), 300)
         }
     }
 
@@ -57,6 +77,9 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
         if (!collapsed || didDrag.current) return
         onExpand?.()
     }
+
+    // 접혀 있어도 드래그/스냅백 중에는 본문을 렌더링해서 시트 몸통이 손가락을 따라오게
+    const showContent = !collapsed || dragOffset !== null || settling
 
     const weekdayMap: { [key: number]: string } = {
         0: 'S', // Sunday
@@ -110,23 +133,22 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            style={collapsed ? {
-                cursor: 'pointer',
-                touchAction: 'none',
+            style={{
+                ...(collapsed ? { cursor: 'pointer', touchAction: 'none' } : {}),
                 ...(dragOffset !== null ? {
                     transform: `translateY(${dragOffset}px)`,
                     transition: 'none',
                 } : {}),
-            } : undefined}
+            }}
         >
-            <div className={sheetHandle} />
+            <div className={sheetHandle} style={collapsed ? undefined : { touchAction: 'none' }} />
             <div className={orderTitleContainer}>
                 <span className={orderTitle}>우선순위 설정</span>
                 <span className={orderStar}>*</span>
                 <span className={orderHighlight}>(선택)</span>
             </div>
 
-            {!collapsed && (
+            {showContent && (
                 <>
                     <span className={orderDescription}>아래 날짜 중 원하는 날짜를 클릭해서 추가해주세요</span>
                     
@@ -160,7 +182,7 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
                     <div className={divider} />
                     
                     {/* 선택 가능한 날짜 목록 */}
-                    <div className={datesList}>
+                    <div className={datesList} data-no-drag>
                         {selectedDates.map((meal, index) => {
                             const isSelected = isDateInOrderList(meal)
                             return (

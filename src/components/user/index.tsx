@@ -376,6 +376,7 @@ export default function User({
                     setOrderList={setOrderList}
                     collapsed={currentTab === 'time'}
                     onExpand={() => setCurrentTab('priority')}
+                    onCollapse={() => setCurrentTab('time')}
                 />
                 <CurrentStatus currentTab={currentTab} setCurrentStatusOpen={setCurrentStatusOpen} onSaveClick={onSaveClick} />
             </>
