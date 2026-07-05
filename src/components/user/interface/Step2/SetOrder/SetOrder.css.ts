@@ -10,7 +10,7 @@ export const setOrderContainer = style({
     flexDirection: 'column',
     backgroundColor: background,
     boxSizing: 'border-box',
-    transition: 'top 0.3s ease, border-radius 0.3s ease, border-top 0.3s ease, box-shadow 0.3s ease',
+    transition: 'top 0.3s ease, transform 0.3s ease, border-radius 0.3s ease, border-top 0.3s ease, box-shadow 0.3s ease',
 })
 
 export const setOrderCollapsed = style({

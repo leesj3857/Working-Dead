@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import { setOrderContainer, setOrderCollapsed, setOrderExpanded, orderTitle,
     orderDescription, orderTitleContainer, priorityList, priorityItem,
     priorityNumber, prioritySlot, divider, datesList, dateChip,
@@ -18,9 +19,44 @@ interface SetOrderProps {
     setOrderList: React.Dispatch<React.SetStateAction<(MealSelection | null)[]>>
     collapsed?: boolean
     containerRef?: React.Ref<HTMLDivElement>
+    onExpand?: () => void
 }
 
-export default function SetOrder({ selectedDates, orderList, setOrderList, collapsed = false, containerRef }: SetOrderProps) {
+export default function SetOrder({ selectedDates, orderList, setOrderList, collapsed = false, containerRef, onExpand }: SetOrderProps) {
+    const touchStartY = useRef<number | null>(null)
+    const didDrag = useRef(false)
+    const [dragOffset, setDragOffset] = useState<number | null>(null)
+
+    // 위로 이만큼 넘게 드래그한 채 놓으면 시트가 펼쳐짐
+    const EXPAND_THRESHOLD = 60
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (!collapsed) return
+        touchStartY.current = e.touches[0].clientY
+        didDrag.current = false
+    }
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!collapsed || touchStartY.current === null) return
+        const delta = e.touches[0].clientY - touchStartY.current
+        if (Math.abs(delta) > 5) didDrag.current = true
+        // 아래로는 원위치까지만, 위로는 자유롭게 따라오도록
+        setDragOffset(Math.min(delta, 0))
+    }
+
+    const handleTouchEnd = () => {
+        const offset = dragOffset
+        touchStartY.current = null
+        setDragOffset(null)
+        if (collapsed && offset !== null && offset < -EXPAND_THRESHOLD) {
+            onExpand?.()
+        }
+    }
+
+    const handleClick = () => {
+        if (!collapsed || didDrag.current) return
+        onExpand?.()
+    }
 
     const weekdayMap: { [key: number]: string } = {
         0: 'S', // Sunday
@@ -67,7 +103,22 @@ export default function SetOrder({ selectedDates, orderList, setOrderList, colla
     const containerClass = `${setOrderContainer} ${collapsed ? setOrderCollapsed : setOrderExpanded}`
 
     return (
-        <div className={containerClass} ref={containerRef}>
+        <div
+            className={containerClass}
+            ref={containerRef}
+            onClick={handleClick}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            style={collapsed ? {
+                cursor: 'pointer',
+                touchAction: 'none',
+                ...(dragOffset !== null ? {
+                    transform: `translateY(${dragOffset}px)`,
+                    transition: 'none',
+                } : {}),
+            } : undefined}
+        >
             <div className={sheetHandle} />
             <div className={orderTitleContainer}>
                 <span className={orderTitle}>우선순위 설정</span>
