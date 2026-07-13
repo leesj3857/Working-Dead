@@ -378,7 +378,9 @@ export default function User({
                     onExpand={() => setCurrentTab('priority')}
                     onCollapse={() => setCurrentTab('time')}
                 />
-                <CurrentStatus currentTab={currentTab} setCurrentStatusOpen={setCurrentStatusOpen} onSaveClick={onSaveClick} />
+                {currentTab === 'time' && (
+                    <CurrentStatus currentTab={currentTab} setCurrentStatusOpen={setCurrentStatusOpen} onSaveClick={onSaveClick} />
+                )}
             </>
             {currentStatusOpen && voteId && <CurrentStatusModal isOpen={currentStatusOpen} voteId={voteId} onClose={() => setCurrentStatusOpen(false)} />}
             {savedModalOpen && <SavedModal onEdit={() => setSavedModalOpen(false)} onExit={handleExit} />}
