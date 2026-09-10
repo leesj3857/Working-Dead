@@ -1,4 +1,4 @@
-# 🇰🇷 Scheduly
+# Scheduly
 
 **Scheduly**는 카카오톡 채팅방에서 약속 날짜와 시간을 간편하게 정할 수 있도록 도와주는 모바일 전용 투표 서비스입니다.  
 참가자들이 가능한 날짜를 고르고 우선순위를 매기면, 실시간으로 집계된 결과를 한눈에 확인할 수 있습니다.
@@ -23,10 +23,6 @@
   - 참가자별 선택 내역 펼쳐 보기
 - 💬 **카카오톡 연동**
   - `botUserKey` 파라미터로 카카오 사용자 식별
-  - 저장 완료 후 카카오톡으로 바로 복귀
-- 📱 **모바일 전용 UX**
-  - PC 접속 시 모바일 이용 안내 페이지로 리다이렉트
-  - 브라우저 뒤로가기로 단계 이동 (참가자 선택 ↔ 날짜 선택)
 
 ---
 
@@ -42,8 +38,8 @@
 
 ### 💄 스타일링
 
-- ![Vanilla Extract](https://img.shields.io/badge/Vanilla_Extract-FF8FB1?style=for-the-badge&logoColor=white): **타입 안전한 CSS-in-JS**
-- ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white): **모달 / 바텀시트 애니메이션**
+- ![Vanilla Extract](https://img.shields.io/badge/Vanilla_Extract-FF8FB1?style=for-the-badge&logoColor=white): 
+- ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white): 
 - ![Material Design Icons](https://img.shields.io/badge/MDI_Icons-2196F3?style=for-the-badge&logo=materialdesignicons&logoColor=white)
 
 ### 📦 번들링
